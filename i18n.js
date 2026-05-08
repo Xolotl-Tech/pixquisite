@@ -116,11 +116,19 @@ window.I18N = {
       brand: "¿Necesitas ayuda para empezar? Estamos aquí para ayudar.",
       email: "hi@pixqui.cloud",
       cols: [
-        { title: "Compañía", links: [{label: "Quienes somos", href: "#"}, {label: "Trabaja con nosotros", href: "#"}, {label: "Soluciones", href: "#"}, {label: "Contáctanos", href: "mailto:hi@pixqui.cloud"}] },
+        { title: "Compañía", links: [{label: "Quienes somos", href: "https://xolotl.tech/"}, {label: "Trabaja con nosotros", href: "https://xolotl.tech/unete"}, {label: "Contáctanos", href: "#contact"}] },
         { title: "Legal", links: [{label: "Políticas de privacidad", href: "privacidad.html"}, {label: "Términos & Condiciones", href: "terminos.html"}, {label: "Condiciones de uso", href: "condiciones.html"}] },
-        { title: "Síguenos en", links: [{label: "Instagram", href: "#"}, {label: "Tiktok", href: "#"}, {label: "Linkedin", href: "#"}, {label: "YouTube", href: "#"}] },
+        { title: "Síguenos en", links: [{label: "Instagram", href: "https://www.instagram.com/xolotl_tech?igsh=MXExeXZvMHJ6dTF3dg%3D%3D&utm_source=qr"}, {label: "Tiktok", href: "https://www.tiktok.com/@xolotl_tech?_r=1&_t=ZS-96BAHvnIZC1"}, {label: "Linkedin", href: "https://mx.linkedin.com/company/xolotl-tech"}/*, {label: "YouTube", href: "#"} */] },
       ],
       bottom: "© 2026 PixquiCloud · Hecho en México con software libre",
+      contact: {
+        title: "Contáctanos",
+        sub: "Elige el canal que prefieras. Respondemos en horario laboral (Lun–Vie, 9:00–18:00 CDMX).",
+        call: "Llámanos",
+        whatsapp: "WhatsApp",
+        email: "Correo",
+        close: "Cerrar",
+      },
     },
     auth: {
       signup: "Crear cuenta",
@@ -276,11 +284,19 @@ window.I18N = {
       brand: "Need help getting started? We're here to help.",
       email: "hi@pixqui.cloud",
       cols: [
-        { title: "Company", links: [{label: "About us", href: "#"}, {label: "Careers", href: "#"}, {label: "Solutions", href: "#"}, {label: "Contact", href: "mailto:hi@pixqui.cloud"}] },
+        { title: "Company", links: [{label: "About us", href: "https://xolotl.tech/"}, {label: "Careers", href: "https://xolotl.tech/unete"}, {label: "Contact", href: "#contact"}] },
         { title: "Legal", links: [{label: "Privacy policy", href: "privacidad.html"}, {label: "Terms & Conditions", href: "terminos.html"}, {label: "Terms of use", href: "condiciones.html"}] },
-        { title: "Follow us", links: [{label: "Instagram", href: "#"}, {label: "Tiktok", href: "#"}, {label: "Linkedin", href: "#"}, {label: "YouTube", href: "#"}] },
+        { title: "Follow us", links: [{label: "Instagram", href: "https://www.instagram.com/xolotl_tech?igsh=MXExeXZvMHJ6dTF3dg%3D%3D&utm_source=qr"}, {label: "Tiktok", href: "https://www.tiktok.com/@xolotl_tech?_r=1&_t=ZS-96BAHvnIZC1"}, {label: "Linkedin", href: "https://mx.linkedin.com/company/xolotl-tech"}/*, {label: "YouTube", href: "#"} */] },
       ],
       bottom: "© 2026 PixquiCloud · Made in Mexico with free software",
+      contact: {
+        title: "Contact us",
+        sub: "Pick the channel you prefer. We answer during business hours (Mon–Fri, 9:00–18:00 CDMX).",
+        call: "Call us",
+        whatsapp: "WhatsApp",
+        email: "Email",
+        close: "Close",
+      },
     },
     auth: {
       signup: "Create account",

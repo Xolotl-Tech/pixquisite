@@ -623,32 +623,94 @@ const FinalCTA = ({ t, onSignup }) => (
   </section>
 );
 
-const Footer = ({ t }) => (
-  <footer>
-    <div className="container">
-      <div className="footer-grid footer-grid-3">
-        <div className="footer-brand">
-          <div className="footer-logo">
-            <img src="assets/footer-logo.png" alt="PixquiCloud" />
-          </div>
-          <p className="footer-help">{t.footer.brand}</p>
-          {t.footer.email && (
-            <a href={`mailto:${t.footer.email}`} className="footer-email">{t.footer.email}</a>
-          )}
+const CONTACT = {
+  phone: "+52 55 2485 2797",
+  phoneTel: "+525524852797",
+  whatsapp: "+52 720 655 0610",
+  whatsappWa: "527206550610",
+  email: "hi@pixqui.cloud",
+};
+
+const ContactModal = ({ t, onClose }) => {
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [onClose]);
+  const c = t.footer.contact;
+  const waMsg = encodeURIComponent("Hola PixquiCloud, me gustaría más información.");
+  return ReactDOM.createPortal(
+    <div className="contact-overlay" onClick={onClose}>
+      <div className="contact-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="contact-title">
+        <button className="contact-close" onClick={onClose} aria-label={c.close}>×</button>
+        <h3 id="contact-title">{c.title}</h3>
+        <p className="contact-sub">{c.sub}</p>
+        <div className="contact-options">
+          <a className="contact-option" href={`tel:${CONTACT.phoneTel}`}>
+            <Icon name="phone" size={20} />
+            <div>
+              <strong>{c.call}</strong>
+              <span>{CONTACT.phone}</span>
+            </div>
+          </a>
+          <a className="contact-option" href={`https://wa.me/${CONTACT.whatsappWa}?text=${waMsg}`} target="_blank" rel="noopener noreferrer">
+            <Icon name="message" size={20} />
+            <div>
+              <strong>{c.whatsapp}</strong>
+              <span>{CONTACT.whatsapp}</span>
+            </div>
+          </a>
+          <a className="contact-option" href={`mailto:${CONTACT.email}`}>
+            <Icon name="mail" size={20} />
+            <div>
+              <strong>{c.email}</strong>
+              <span>{CONTACT.email}</span>
+            </div>
+          </a>
         </div>
-        {t.footer.cols.map((col, i) => (
-          <div key={i} className="footer-col">
-            <h4>{col.title}</h4>
-            {col.links.map((l, j) => <a key={j} href={l.href}>{l.label}</a>)}
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+const Footer = ({ t }) => {
+  const [contactOpen, setContactOpen] = React.useState(false);
+  return (
+    <footer>
+      <div className="container">
+        <div className="footer-grid footer-grid-3">
+          <div className="footer-brand">
+            <div className="footer-logo">
+              <img src="assets/footer-logo.png" alt="PixquiCloud" />
+            </div>
+            <p className="footer-help">{t.footer.brand}</p>
+            {t.footer.email && (
+              <a href={`mailto:${t.footer.email}`} className="footer-email">{t.footer.email}</a>
+            )}
           </div>
-        ))}
+          {t.footer.cols.map((col, i) => (
+            <div key={i} className="footer-col">
+              <h4>{col.title}</h4>
+              {col.links.map((l, j) => {
+                if (l.href === "#contact") {
+                  return <a key={j} href="#contact" onClick={(e) => { e.preventDefault(); setContactOpen(true); }}>{l.label}</a>;
+                }
+                const ext = /^https?:\/\//.test(l.href);
+                return <a key={j} href={l.href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{l.label}</a>;
+              })}
+            </div>
+          ))}
+        </div>
+        <div className="footer-bottom">
+          <span>{t.footer.bottom}</span>
+          <span>v 2026.4</span>
+        </div>
       </div>
-      <div className="footer-bottom">
-        <span>{t.footer.bottom}</span>
-        <span>v 2026.4</span>
-      </div>
-    </div>
-  </footer>
-);
+      {contactOpen && <ContactModal t={t} onClose={() => setContactOpen(false)} />}
+    </footer>
+  );
+};
 
 Object.assign(window, { NavBar, Hero, FeaturesSection, PreviewSection, PricingSection, PrivacySection, MobileSection, TestimonialsSection, FAQSection, FinalCTA, Footer });
