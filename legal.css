@@ -144,12 +144,12 @@
 }
 .legal-content li::marker { color: var(--green); }
 .legal-content strong { color: var(--ink); font-weight: 500; }
-.legal-content a {
+.legal-content a:not(.btn):not(.legal-related-card) {
   color: var(--green);
   border-bottom: 1px solid rgba(132,183,157,0.3);
   transition: border-color .15s;
 }
-.legal-content a:hover { border-color: var(--green); }
+.legal-content a:not(.btn):not(.legal-related-card):hover { border-color: var(--green); }
 .legal-content code {
   font-family: var(--mono);
   font-size: 13px;
@@ -289,4 +289,108 @@
   .legal-content h2 .num { position: static; display: block; margin-bottom: 4px; }
   .legal-related { grid-template-columns: 1fr; }
   .legal-footer-cta { padding: 28px 22px; }
+}
+
+/* === Mobile: TOC as swipeable chip scroller (Rappi-style) === */
+@media (max-width: 980px) {
+  .legal-page { overflow-x: hidden; }
+  .legal-body > .container { overflow: visible; }
+
+  .legal-toc {
+    position: static;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .legal-grid { min-width: 0; }
+  .legal-grid > .legal-toc { min-width: 0; }
+  .legal-grid > .legal-content { min-width: 0; max-width: 100%; }
+  .legal-toc h4 {
+    padding: 0 20px;
+    margin: 0 0 12px;
+  }
+  .legal-toc ol {
+    columns: unset !important;
+    list-style: none;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 2px 20px 12px;
+    margin: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    scroll-padding-left: 20px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+    scrollbar-width: none;
+  }
+  .legal-toc ol::-webkit-scrollbar { width: 0; height: 0; display: none; }
+  .legal-toc ol li {
+    flex: 0 0 auto;
+    padding: 0;
+    margin: 0;
+    scroll-snap-align: start;
+    counter-increment: toc;
+  }
+  .legal-toc ol li a {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg-2);
+    color: var(--ink-2);
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    min-height: 40px;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background .15s, border-color .15s, color .15s, transform .12s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .legal-toc ol li a:active { transform: scale(0.97); }
+  .legal-toc ol li a:hover {
+    background: var(--panel);
+    border-color: var(--border-strong);
+    color: var(--ink);
+  }
+  .legal-toc ol li a.active {
+    background: rgba(132,183,157,0.14);
+    border-color: rgba(132,183,157,0.45);
+    color: var(--green);
+  }
+  .legal-toc ol li a::before {
+    color: var(--mute);
+    font-size: 10px;
+  }
+  .legal-toc ol li a.active::before { color: var(--green); }
+}
+
+/* Tables: wrap in scrollable container on mobile so they don't force the grid wider */
+.legal-table-wrap {
+  margin: 20px 0;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.legal-table-wrap table {
+  margin: 0;
+  width: 100%;
+  min-width: 540px;
+  border: 0;
+}
+.legal-table-wrap th, .legal-table-wrap td {
+  white-space: nowrap;
+}
+
+/* Tablet: fix h2 padding squeeze (640-980px) */
+@media (max-width: 980px) and (min-width: 641px) {
+  .legal-content h2 { padding-left: 44px; }
+  .legal-content h2 .num { font-size: 11px; }
 }

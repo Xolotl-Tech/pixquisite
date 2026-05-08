@@ -936,8 +936,8 @@ footer {
   .hero { padding: 40px 0 0; }
   .hero h1 { font-size: clamp(40px, 13vw, 64px); }
   .hero .subtitle { font-size: 16px; max-width: 100%; }
-  .hero-cta { gap: 10px; }
-  .hero-cta .btn { flex: 1; justify-content: center; min-width: 140px; }
+  .hero-cta { gap: 10px; flex-wrap: wrap; }
+  .hero-cta .btn { flex: 0 0 auto; justify-content: center; }
   .hero-visual { height: 320px; }
   .fc-1 { width: 220px; }
   .fc-2 { width: 200px; }
@@ -994,8 +994,8 @@ footer {
 /* Small phones */
 @media (max-width: 380px) {
   .container { padding: 0 16px; }
-  .hero-cta { flex-direction: column; }
-  .hero-cta .btn { width: 100%; }
+  .hero-cta { flex-direction: row; }
+  .hero-cta .btn { width: auto; }
   .lang-switch { display: none; }
 }
 
@@ -1086,4 +1086,47 @@ footer {
 @keyframes contactSlideUp {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Mobile tweaks: contact modal & touch targets === */
+@media (max-width: 480px) {
+  .contact-modal {
+    padding: 24px 20px;
+    border-radius: 18px;
+    max-width: 100%;
+  }
+  .contact-modal h3 { font-size: 21px; }
+  .contact-modal .contact-sub { font-size: 13px; margin-bottom: 18px; }
+  .contact-option {
+    padding: 14px;
+    gap: 12px;
+    min-height: 56px;
+  }
+  .contact-option strong { font-size: 14px; }
+  .contact-option span { font-size: 12px; }
+  .contact-close {
+    width: 36px; height: 36px;
+    font-size: 26px;
+    top: 10px; right: 10px;
+  }
+}
+
+/* Bottom-sheet feel on very small screens */
+@media (max-width: 380px) {
+  .contact-overlay { align-items: flex-end; padding: 0; }
+  .contact-modal {
+    border-radius: 20px 20px 0 0;
+    padding: 22px 18px 32px;
+    animation: contactSheetUp 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes contactSheetUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+}
+
+/* Touch targets ≥ 44px on mobile */
+@media (max-width: 640px) {
+  .lang-switch button { padding: 8px 12px; min-height: 36px; font-size: 11px; }
+  .faq-q .plus { width: 32px; height: 32px; }
 }

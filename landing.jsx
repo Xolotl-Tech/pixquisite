@@ -682,9 +682,9 @@ const Footer = ({ t }) => {
       <div className="container">
         <div className="footer-grid footer-grid-3">
           <div className="footer-brand">
-            <div className="footer-logo">
+            <a href="#" className="footer-logo" aria-label="PixquiCloud — inicio" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
               <img src="assets/footer-logo.png" alt="PixquiCloud" />
-            </div>
+            </a>
             <p className="footer-help">{t.footer.brand}</p>
             {t.footer.email && (
               <a href={`mailto:${t.footer.email}`} className="footer-email">{t.footer.email}</a>
