@@ -1,6 +1,9 @@
 // Landing page components
+import React from "react";
+import ReactDOM from "react-dom";
+import { Icon } from "./icons.jsx";
 
-const NavBar = ({ t, lang, setLang, onLogin, onSignup }) => {
+export const NavBar = ({ t, lang, setLang, onLogin, onSignup }) => {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -54,7 +57,7 @@ const NavBar = ({ t, lang, setLang, onLogin, onSignup }) => {
   );
 };
 
-const Hero = ({ t, onSignup, onDemo }) => (
+export const Hero = ({ t, onSignup, onDemo }) => (
   <section className="hero">
     <div className="container hero-grid">
       <div>
@@ -82,7 +85,7 @@ const Hero = ({ t, onSignup, onDemo }) => (
   </section>
 );
 
-const HeroVisual = () => (
+export const HeroVisual = () => (
   <div className="hero-visual">
     {/* File card */}
     <div className="float-card fc-1">
@@ -161,7 +164,7 @@ const TrustStrip = ({ text }) => (
   </div>
 );
 
-const FeaturesSection = ({ t }) => {
+export const FeaturesSection = ({ t }) => {
   const items = t.features.items;
   const iconNames = ["files", "photos", "calendar", "contacts", "talk", "office"];
   const visuals = [
@@ -261,7 +264,7 @@ const FeatureOffice = () => (
   </div>
 );
 
-const PreviewSection = ({ t, onTry }) => (
+export const PreviewSection = ({ t, onTry }) => (
   <section id="preview" style={{ background: "linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%)" }}>
     <div className="container">
       <div className="section-head">
@@ -341,7 +344,7 @@ const DashboardPreview = () => (
   </div>
 );
 
-const PricingSection = ({ t, onSignup }) => (
+export const PricingSection = ({ t, onSignup }) => (
   <section id="pricing">
     <div className="container">
       <div className="section-head">
@@ -372,7 +375,7 @@ const PricingSection = ({ t, onSignup }) => (
   </section>
 );
 
-const PrivacySection = ({ t }) => {
+export const PrivacySection = ({ t }) => {
   const beforeText = `Q2-roadmap.md
 "Plan estratégico Q2 2026
 - Migrar de Drive
@@ -469,7 +472,7 @@ H1xZ7kQ9wE5rT3yU6i`;
   );
 };
 
-const MobileSection = ({ t }) => (
+export const MobileSection = ({ t }) => (
   <section id="apps" className="mobile-section">
     <div className="container">
       <div className="section-head" style={{ textAlign: "center", display: "block", marginBottom: 0 }}>
@@ -554,7 +557,7 @@ const MobileSection = ({ t }) => (
   </section>
 );
 
-const TestimonialsSection = ({ t }) => (
+export const TestimonialsSection = ({ t }) => (
   <section>
     <div className="container">
       <div className="section-head">
@@ -581,7 +584,7 @@ const TestimonialsSection = ({ t }) => (
   </section>
 );
 
-const FAQSection = ({ t }) => {
+export const FAQSection = ({ t }) => {
   const [open, setOpen] = React.useState(0);
   return (
     <section>
@@ -608,7 +611,7 @@ const FAQSection = ({ t }) => {
   );
 };
 
-const FinalCTA = ({ t, onSignup }) => (
+export const FinalCTA = ({ t, onSignup }) => (
   <section className="final-cta">
     <div className="container">
       <h2 className="h-display">
@@ -631,7 +634,7 @@ const CONTACT = {
   email: "hi@pixqui.cloud",
 };
 
-const ContactModal = ({ t, onClose }) => {
+export const ContactModal = ({ t, onClose }) => {
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
@@ -675,7 +678,7 @@ const ContactModal = ({ t, onClose }) => {
   );
 };
 
-const Footer = ({ t }) => {
+export const Footer = ({ t }) => {
   const [contactOpen, setContactOpen] = React.useState(false);
   return (
     <footer>
@@ -712,5 +715,3 @@ const Footer = ({ t }) => {
     </footer>
   );
 };
-
-Object.assign(window, { NavBar, Hero, FeaturesSection, PreviewSection, PricingSection, PrivacySection, MobileSection, TestimonialsSection, FAQSection, FinalCTA, Footer });

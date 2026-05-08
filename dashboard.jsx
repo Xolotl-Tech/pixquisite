@@ -1,4 +1,6 @@
 // Dashboard app — sidebar + topbar + file list + file preview
+import React from "react";
+import { Icon } from "./icons.jsx";
 
 const SAMPLE_FILES = [
   { id: "f1", icon: "doc", type: "doc", name: "Q2-roadmap.md", modified: "hace 2 min", modifiedEn: "2 min ago", size: "24 KB", shared: ["MR"], starred: true, encrypted: true,
@@ -440,4 +442,4 @@ const FilePreview = ({ file, onClose, t, lang, user }) => {
   );
 };
 
-window.Dashboard = Dashboard;
+export { Dashboard };

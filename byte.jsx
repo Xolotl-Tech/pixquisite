@@ -1,6 +1,8 @@
 // Byte AI section component
+import React from "react";
+import { Icon } from "./icons.jsx";
 
-const ByteSection = ({ t, lang, onSignup }) => {
+export const ByteSection = ({ t, lang, onSignup }) => {
   const b = t.byte;
   const [phase, setPhase] = React.useState("idle"); // idle | userIn | typing | respIn | done
   const [userMsg, setUserMsg] = React.useState(b.chatExample[0].text);
@@ -182,5 +184,3 @@ const ByteSection = ({ t, lang, onSignup }) => {
     </section>
   );
 };
-
-window.ByteSection = ByteSection;

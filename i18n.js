@@ -1,5 +1,5 @@
 // i18n strings — ES / EN
-window.I18N = {
+export const I18N = {
   es: {
     nav: { features: "Funciones", pricing: "Planes", privacy: "Privacidad", apps: "Apps", login: "Iniciar sesión", signup: "Crear cuenta" },
     hero: {

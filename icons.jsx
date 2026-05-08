@@ -1,5 +1,5 @@
 // Inline SVG icons used across landing + app
-const Icon = ({ name, size = 20, stroke = 1.5, ...props }) => {
+export const Icon = ({ name, size = 20, stroke = 1.5, ...props }) => {
   const s = size;
   const sw = stroke;
   const c = "currentColor";
@@ -84,4 +84,3 @@ const Icon = ({ name, size = 20, stroke = 1.5, ...props }) => {
     default: return null;
   }
 };
-window.Icon = Icon;
