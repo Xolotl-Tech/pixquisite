@@ -1,4 +1,4 @@
-// Root app — orchestrates landing, auth, dashboard
+// Root app — orchestrates landing and dashboard demo
 
 const { useState, useEffect } = React;
 
