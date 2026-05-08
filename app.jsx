@@ -1,6 +1,18 @@
 // Root app — orchestrates landing and dashboard demo
-
-const { useState, useEffect } = React;
+import React, { useState, useEffect } from "react";
+import { createRoot } from "react-dom/client";
+import { I18N } from "./i18n.js";
+import { Icon } from "./icons.jsx";
+import {
+  NavBar, Hero, FeaturesSection, PreviewSection, PricingSection,
+  PrivacySection, MobileSection, TestimonialsSection, FAQSection,
+  FinalCTA, Footer,
+} from "./landing.jsx";
+import { ByteSection } from "./byte.jsx";
+import { Dashboard } from "./dashboard.jsx";
+import "./styles.css";
+import "./app.css";
+import "./byte.css";
 
 const DEMO_USER = { name: "María González", email: "demo@pixqui.cloud", workspace: "demo", region: "MX-Centro" };
 
@@ -9,7 +21,7 @@ const App = () => {
   const [view, setView] = useState("landing");
   const [toast, setToast] = useState(null);
 
-  const t = window.I18N[lang];
+  const t = I18N[lang];
 
   useEffect(() => { localStorage.setItem("pxq_lang", lang); }, [lang]);
 
@@ -64,7 +76,7 @@ const App = () => {
   );
 };
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+createRoot(document.getElementById("root")).render(<App />);
 
 // Scroll-reveal: fade in from bottom on scroll
 function setupReveal() {
@@ -78,7 +90,6 @@ function setupReveal() {
   }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
 
   const tag = () => {
-    // Tag landing-level elements: sections + major cards
     const selectors = [
       "section .container > .section-head",
       "section .feature",
@@ -98,22 +109,19 @@ function setupReveal() {
       ".stats-strip",
       "footer .footer-grid > *",
     ];
-    document.querySelectorAll(selectors.join(",")).forEach((el, i) => {
+    document.querySelectorAll(selectors.join(",")).forEach((el) => {
       if (el.classList.contains("reveal")) return;
       el.classList.add("reveal");
-      // Stagger siblings within the same parent
       const idx = Array.from(el.parentElement.children).indexOf(el);
       el.style.transitionDelay = (Math.min(idx, 5) * 70) + "ms";
       observer.observe(el);
     });
   };
 
-  // Tag now and again as React mounts/updates
   tag();
   setTimeout(tag, 100);
   setTimeout(tag, 400);
 
-  // Re-tag when view changes (landing <-> app)
   const mo = new MutationObserver(() => tag());
   mo.observe(document.getElementById("root"), { childList: true, subtree: true });
 }
