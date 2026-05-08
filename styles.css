@@ -998,3 +998,92 @@ footer {
   .hero-cta .btn { width: 100%; }
   .lang-switch { display: none; }
 }
+
+/* Contact modal */
+.contact-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: contactFadeIn 0.18s ease-out;
+}
+.contact-modal {
+  background: #0d1410;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 440px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  animation: contactSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.contact-modal h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #fff;
+}
+.contact-modal .contact-sub {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+.contact-close {
+  position: absolute; top: 14px; right: 14px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+.contact-close:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+.contact-options {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.contact-option {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.contact-option:hover {
+  background: rgba(165, 214, 167, 0.08);
+  border-color: rgba(165, 214, 167, 0.3);
+  transform: translateY(-1px);
+}
+.contact-option > div {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.contact-option strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+.contact-option span {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: "JetBrains Mono", monospace;
+}
+@keyframes contactFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes contactSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}

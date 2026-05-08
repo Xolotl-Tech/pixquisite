@@ -2,54 +2,40 @@
 
 const { useState, useEffect } = React;
 
+const DEMO_USER = { name: "María González", email: "demo@pixqui.cloud", workspace: "demo", region: "MX-Centro" };
+
 const App = () => {
   const [lang, setLang] = useState(() => localStorage.getItem("pxq_lang") || "es");
-  const [authMode, setAuthMode] = useState(null); // null | 'login' | 'signup'
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("pxq_user");
-    return saved ? JSON.parse(saved) : null;
-  });
-  const [view, setView] = useState(() => {
-    return localStorage.getItem("pxq_user") ? "app" : "landing";
-  });
+  const [view, setView] = useState("landing");
   const [toast, setToast] = useState(null);
-  const [initialFile, setInitialFile] = useState(null);
 
   const t = window.I18N[lang];
 
   useEffect(() => { localStorage.setItem("pxq_lang", lang); }, [lang]);
-  useEffect(() => {
-    if (user) localStorage.setItem("pxq_user", JSON.stringify(user));
-    else localStorage.removeItem("pxq_user");
-  }, [user]);
 
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(null), 2400);
   };
 
-  const handleAuth = (data) => {
-    const u = { name: data.name || "María González", email: data.email || "maria@pixqui.cloud", workspace: data.workspace || "mi-nube", region: data.region || "MX-Centro" };
-    setUser(u);
-    setAuthMode(null);
+  const handleLogin = () => window.open("https://app.pixqui.cloud/", "_blank");
+
+  const handleSignup = () => {
+    const el = document.getElementById("pricing");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleDemo = () => {
     setView("app");
     setTimeout(() => showToast(t.app.welcomeToast), 400);
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    setView("landing");
-  };
+  const handleExitDemo = () => setView("landing");
 
-  const handleDemo = () => {
-    // Demo without signup — preview the dashboard
-    handleAuth({ name: "María González", email: "demo@pixqui.cloud", workspace: "demo", region: "MX-Centro" });
-  };
-
-  if (view === "app" && user) {
+  if (view === "app") {
     return (
       <>
-        <Dashboard t={t} lang={lang} user={user} onLogout={handleLogout} onHome={() => setView("landing")} showToast={showToast} initialFile={initialFile} />
+        <Dashboard t={t} lang={lang} user={DEMO_USER} onLogout={handleExitDemo} onHome={handleExitDemo} showToast={showToast} initialFile={null} />
         {toast && (
           <div className="toast">
             <div className="ti"><Icon name="check" size={14}/></div>
@@ -62,21 +48,18 @@ const App = () => {
 
   return (
     <>
-      <NavBar t={t} lang={lang} setLang={setLang} onLogin={() => window.open("https://app.pixqui.cloud/", "_blank")} onSignup={() => setAuthMode("signup")} />
-      <Hero t={t} onSignup={() => setAuthMode("signup")} onDemo={handleDemo} />
+      <NavBar t={t} lang={lang} setLang={setLang} onLogin={handleLogin} onSignup={handleSignup} />
+      <Hero t={t} onSignup={handleSignup} onDemo={handleDemo} />
       <FeaturesSection t={t} />
-      <ByteSection t={t} lang={lang} onSignup={() => setAuthMode("signup")} />
+      <ByteSection t={t} lang={lang} onSignup={handleSignup} />
       <PreviewSection t={t} onTry={handleDemo} />
-      <PricingSection t={t} onSignup={() => setAuthMode("signup")} />
+      <PricingSection t={t} onSignup={handleSignup} />
       <PrivacySection t={t} />
       <MobileSection t={t} />
       <TestimonialsSection t={t} />
       <FAQSection t={t} />
-      <FinalCTA t={t} onSignup={() => setAuthMode("signup")} />
+      <FinalCTA t={t} onSignup={handleSignup} />
       <Footer t={t} />
-      {authMode && (
-        <AuthModal t={t} mode={authMode} setMode={setAuthMode} onClose={() => setAuthMode(null)} onAuth={handleAuth} />
-      )}
     </>
   );
 };

@@ -50,7 +50,7 @@ Sitio **estático**, sin paso de build. React se carga vía CDN y los archivos `
 
 ```
 .
-├── indext.html              # Entry point HTML
+├── index.html               # Entry point HTML
 ├── app.jsx                  # Componente raíz (router de vistas)
 ├── landing.jsx              # Hero, features, pricing, FAQ, footer
 ├── auth.jsx                 # Modal de login / signup
@@ -69,8 +69,6 @@ Sitio **estático**, sin paso de build. React se carga vía CDN y los archivos `
 └── uploads/                 # Archivos de ejemplo del dashboard demo
 ```
 
-> **Nota:** el archivo de entrada se llama `indext.html` (no `index.html`). Esto afecta cómo se resuelve la raíz en el servidor — ver [Despliegue](#despliegue-a-producción).
-
 ## Desarrollo local
 
 Los recursos deben servirse por HTTP, no abriendo el `.html` con `file://`, ya que la CSP y la carga de scripts externos lo requieren.
@@ -86,7 +84,7 @@ npx serve .
 php -S localhost:8000
 ```
 
-Después abre <http://localhost:8000/indext.html>.
+Después abre <http://localhost:8000/>.
 
 ### Requisitos
 
