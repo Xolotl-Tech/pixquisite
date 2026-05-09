@@ -10,6 +10,7 @@ import {
 } from "./landing.jsx";
 import { ByteSection } from "./byte.jsx";
 import { Dashboard } from "./dashboard.jsx";
+import "./fonts.js";
 import "./styles.css";
 import "./app.css";
 import "./byte.css";
