@@ -1,7 +1,8 @@
 // Landing page components
 import React from "react";
-import ReactDOM from "react-dom";
+import { createPortal } from "react-dom";
 import { Icon } from "./icons.jsx";
+import { CONTACT, GRADIENTS } from "./config.js";
 
 export const NavBar = ({ t, lang, setLang, onLogin, onSignup }) => {
   const [open, setOpen] = React.useState(false);
@@ -37,7 +38,7 @@ export const NavBar = ({ t, lang, setLang, onLogin, onSignup }) => {
           </button>
         </div>
       </div>
-      {open && ReactDOM.createPortal(
+      {open && createPortal(
         <div className="nav-drawer" onClick={close}>
           <div className="nav-drawer-inner" onClick={e => e.stopPropagation()}>
             <a href="#features" onClick={close}>{t.nav.features}</a>
@@ -433,7 +434,7 @@ export const PaymentModal = ({ t, plan, onClose }) => {
     }
   };
 
-  return ReactDOM.createPortal(
+  return createPortal(
     <div className="contact-overlay" onClick={onClose}>
       <div className="contact-modal pay-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true">
         <button className="contact-close" onClick={onClose} aria-label={p.close}>×</button>
@@ -655,18 +656,8 @@ export const MobileSection = ({ t }) => (
             <div style={{ height: 44, paddingTop: 16, fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, textAlign: "center" }}>9:41</div>
             <div style={{ padding: "16px 20px", fontFamily: "var(--display)", fontSize: 24, fontWeight: 600 }}>Fotos</div>
             <div style={{ padding: "0 12px", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 4 }}>
-              {[
-                "linear-gradient(135deg,#1e582e,#84b79d)",
-                "linear-gradient(135deg,#f3c969,#f5ead4)",
-                "linear-gradient(135deg,#84b79d,#1e582e)",
-                "linear-gradient(135deg,#f5ead4,#f3c969)",
-                "linear-gradient(135deg,#2c3a31,#84b79d)",
-                "linear-gradient(135deg,#1e582e,#f3c969)",
-                "linear-gradient(135deg,#84b79d,#f5ead4)",
-                "linear-gradient(135deg,#f3c969,#1e582e)",
-                "linear-gradient(135deg,#1e582e,#84b79d)",
-              ].map((g,i) => (
-                <div key={i} style={{ aspectRatio: 1, borderRadius: 4, background: g }}></div>
+              {Array.from({ length: 9 }).map((_, i) => (
+                <div key={i} style={{ aspectRatio: 1, borderRadius: 4, background: GRADIENTS[i % GRADIENTS.length] }}></div>
               ))}
             </div>
           </div>
@@ -681,13 +672,13 @@ export const MobileSection = ({ t }) => (
                 ["DH", "Diego", "📷 enviada", "8:14"],
                 ["SC", "Sofía", "nos vemos jueves", "ayer"],
                 ["EQ", "Equipo Polígono", "5 mensajes nuevos", "ayer"],
-              ].map(([i, n, m, t], idx) => (
+              ].map(([i, n, m, ts], idx) => (
                 <div key={idx} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: "1px solid var(--border)" }}>
                   <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg, var(--green-deep), var(--green))", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 600, color: "#062014" }}>{i}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 500 }}>
                       <span>{n}</span>
-                      <span style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--mute)" }}>{t}</span>
+                      <span style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--mute)" }}>{ts}</span>
                     </div>
                     <div style={{ fontSize: 11, color: "var(--mute)" }}>{m}</div>
                   </div>
@@ -770,14 +761,6 @@ export const FinalCTA = ({ t, onSignup }) => (
   </section>
 );
 
-const CONTACT = {
-  phone: "+52 55 2485 2797",
-  phoneTel: "+525524852797",
-  whatsapp: "+52 720 655 0610",
-  whatsappWa: "527206550610",
-  email: "hi@pixqui.cloud",
-};
-
 export const ContactModal = ({ t, onClose }) => {
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
@@ -787,7 +770,7 @@ export const ContactModal = ({ t, onClose }) => {
   }, [onClose]);
   const c = t.footer.contact;
   const waMsg = encodeURIComponent("Hola PixquiCloud, me gustaría más información.");
-  return ReactDOM.createPortal(
+  return createPortal(
     <div className="contact-overlay" onClick={onClose}>
       <div className="contact-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="contact-title">
         <button className="contact-close" onClick={onClose} aria-label={c.close}>×</button>

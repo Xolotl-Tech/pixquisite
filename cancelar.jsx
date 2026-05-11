@@ -24,10 +24,14 @@ const CancelPage = () => {
     setError(null);
     setItems(null);
     try {
-      const res = await fetch(`/api/subscription/list?email=${encodeURIComponent(email.trim())}`);
-      if (!res.ok) throw new Error("lookup failed");
-      const data = await res.json();
-      setItems(data.items || []);
+      const q = encodeURIComponent(email.trim());
+      const [mp, stripe] = await Promise.allSettled([
+        fetch(`/api/subscription/list?email=${q}`).then((r) => r.ok ? r.json() : { items: [] }),
+        fetch(`/api/stripe/subscription/list?email=${q}`).then((r) => r.ok ? r.json() : { items: [] }),
+      ]);
+      const mpItems = mp.status === "fulfilled" ? (mp.value.items || []).map((s) => ({ ...s, provider: "mercadopago" })) : [];
+      const stripeItems = stripe.status === "fulfilled" ? (stripe.value.items || []).map((s) => ({ ...s, provider: "stripe" })) : [];
+      setItems([...mpItems, ...stripeItems]);
     } catch {
       setError(t.error);
     } finally {
@@ -35,11 +39,12 @@ const CancelPage = () => {
     }
   };
 
-  const cancel = async (id) => {
+  const cancel = async (id, provider) => {
     setCancelling(id);
     setError(null);
     try {
-      const res = await fetch("/api/subscription/cancel", {
+      const url = provider === "stripe" ? "/api/stripe/subscription/cancel" : "/api/subscription/cancel";
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, email: email.trim() }),
@@ -113,7 +118,7 @@ const CancelPage = () => {
                       ) : (
                         <button
                           className="btn btn-ghost"
-                          onClick={() => cancel(s.id)}
+                          onClick={() => cancel(s.id, s.provider)}
                           disabled={cancelling === s.id}
                         >
                           {cancelling === s.id ? t.cancelling : t.cancelBtn}

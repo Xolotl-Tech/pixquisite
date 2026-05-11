@@ -14,7 +14,10 @@ export const ByteSection = ({ t, lang, onSignup }) => {
   const chatRef = React.useRef(null);
   const startedRef = React.useRef(false);
 
-  // Trigger sequence on viewport entry
+  // Trigger sequence on viewport entry. Captured once on mount; later lang changes
+  // are intentional no-ops so the typewriter doesn't restart on every language toggle.
+  const bRef = React.useRef(b);
+  bRef.current = b;
   React.useEffect(() => {
     const el = chatRef.current;
     if (!el) return;
@@ -22,7 +25,8 @@ export const ByteSection = ({ t, lang, onSignup }) => {
       entries.forEach(e => {
         if (e.isIntersecting && !startedRef.current) {
           startedRef.current = true;
-          runSequence(b.chatExample[0].text, b.chatExample[1].text);
+          const cur = bRef.current;
+          runSequence(cur.chatExample[0].text, cur.chatExample[1].text);
         }
       });
     }, { threshold: 0.3 });

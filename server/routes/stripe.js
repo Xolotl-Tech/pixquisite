@@ -133,6 +133,11 @@ export const stripeWebhookHandler = [
   (req, res) => {
     if (!stripe) return res.status(503).send("Stripe no está configurado");
     const secret = process.env.STRIPE_WEBHOOK_SECRET;
+    const isProd = process.env.NODE_ENV === "production";
+    if (!secret && isProd) {
+      console.error("[stripe] STRIPE_WEBHOOK_SECRET requerido en producción — rechazando webhook");
+      return res.status(503).send("Webhook no configurado");
+    }
     let event;
     try {
       if (secret) {

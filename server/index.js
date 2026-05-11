@@ -7,7 +7,14 @@ import stripeRouter, { stripeWebhookHandler } from "./routes/stripe.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({ origin: process.env.PUBLIC_BASE_URL || "http://localhost:5173" }));
+// Comma-separated list in CORS_ORIGINS (e.g. "https://pixqui.cloud,https://www.pixqui.cloud").
+// Falls back to PUBLIC_BASE_URL or localhost dev origin.
+const corsOrigins = (process.env.CORS_ORIGINS || process.env.PUBLIC_BASE_URL || "http://localhost:5173")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+app.use(cors({ origin: corsOrigins }));
 
 // Stripe webhook must be mounted before express.json() to preserve the raw body for signature verification.
 app.post("/api/webhooks/stripe", ...stripeWebhookHandler);
