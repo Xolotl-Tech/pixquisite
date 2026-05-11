@@ -13,6 +13,14 @@ export default defineConfig({
       loader: { ".js": "jsx" },
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     rollupOptions: {
       input: {
@@ -20,6 +28,10 @@ export default defineConfig({
         privacidad: resolve(__dirname, "privacidad.html"),
         terminos: resolve(__dirname, "terminos.html"),
         condiciones: resolve(__dirname, "condiciones.html"),
+        success: resolve(__dirname, "success.html"),
+        pending: resolve(__dirname, "pending.html"),
+        failure: resolve(__dirname, "failure.html"),
+        cancelar: resolve(__dirname, "cancelar.html"),
       },
     },
   },

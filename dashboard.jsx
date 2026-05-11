@@ -1,6 +1,7 @@
 // Dashboard app — sidebar + topbar + file list + file preview
 import React from "react";
 import { Icon } from "./icons.jsx";
+import { GRADIENTS } from "./config.js";
 
 const SAMPLE_FILES = [
   { id: "f1", icon: "doc", type: "doc", name: "Q2-roadmap.md", modified: "hace 2 min", modifiedEn: "2 min ago", size: "24 KB", shared: ["MR"], starred: true, encrypted: true,
@@ -128,7 +129,7 @@ const Dashboard = ({ t, lang, user, onLogout, onHome, showToast, initialFile }) 
                 <span className="current">{A.bcFiles}</span>
               </div>
               <h1 className="app-h1">{A.filesTitle}</h1>
-              <div className="app-sub">{A.filesSub}, {user?.name?.split(" ")[0] || "amigo"} · {filteredFiles.length} {lang === "es" ? "elementos" : "items"}</div>
+              <div className="app-sub">{A.filesSub}, {user?.name?.split(" ")[0] || A.fallbackName} · {filteredFiles.length} {A.items}</div>
 
               <div className="app-toolbar">
                 <div className="tb-tabs">
@@ -184,81 +185,57 @@ const Dashboard = ({ t, lang, user, onLogout, onHome, showToast, initialFile }) 
           )}
 
           {activeNav === "photos" && (
-            <PhotosView t={t} lang={lang} />
+            <PhotosView t={t} />
           )}
-          {activeNav === "calendar" && <CalendarView t={t} lang={lang} />}
+          {activeNav === "calendar" && <CalendarView t={t} />}
           {activeNav === "contacts" && <ContactsView t={t} />}
           {activeNav === "talk" && <TalkView t={t} />}
           {activeNav === "deleted" && (
-            <EmptyView title={lang === "es" ? "Papelera vacía" : "Trash empty"} sub={lang === "es" ? "Los archivos eliminados aparecen aquí." : "Deleted files appear here."} />
+            <EmptyView title={A.trashEmpty.title} sub={A.trashEmpty.sub} />
           )}
         </div>
       </main>
 
       {selected && <FilePreview file={selected} onClose={() => setSelected(null)} t={t} lang={lang} user={user} />}
+
     </div>
   );
 };
 
-const PhotoGridView = ({ files, onPick }) => {
-  const grads = [
-    "linear-gradient(135deg,#1e582e,#84b79d)",
-    "linear-gradient(135deg,#f3c969,#f5ead4)",
-    "linear-gradient(135deg,#84b79d,#1e582e)",
-    "linear-gradient(135deg,#f5ead4,#f3c969)",
-    "linear-gradient(135deg,#2c3a31,#84b79d)",
-    "linear-gradient(135deg,#1e582e,#f3c969)",
-    "linear-gradient(135deg,#84b79d,#f5ead4)",
-    "linear-gradient(135deg,#f3c969,#1e582e)",
-  ];
-  return (
-    <div className="app-photogrid">
-      {files.map((f, i) => (
-        <div key={f.id} className="photo-tile" style={{ background: grads[i % grads.length] }} onClick={() => f.type !== "folder" && onPick(f)}>
-          <div className="name">{f.name}</div>
+const PhotoGridView = ({ files, onPick }) => (
+  <div className="app-photogrid">
+    {files.map((f, i) => (
+      <div key={f.id} className="photo-tile" style={{ background: GRADIENTS[i % GRADIENTS.length] }} onClick={() => f.type !== "folder" && onPick(f)}>
+        <div className="name">{f.name}</div>
+      </div>
+    ))}
+  </div>
+);
+
+const PhotosView = ({ t }) => (
+  <>
+    <div className="crumbs"><span className="current">{t.app.sb.photos}</span></div>
+    <h1 className="app-h1">{t.app.sb.photos}</h1>
+    <div className="app-sub">{t.app.photos.sub}</div>
+    <div className="app-photogrid" style={{ marginTop: 24 }}>
+      {Array.from({ length: 15 }).map((_, i) => (
+        <div key={i} className="photo-tile" style={{ background: GRADIENTS[i % GRADIENTS.length] }}>
+          <div className="name">IMG_{4500 + i}.jpg</div>
         </div>
       ))}
     </div>
-  );
-};
+  </>
+);
 
-const PhotosView = ({ t, lang }) => {
-  const grads = [
-    "linear-gradient(135deg,#1e582e,#84b79d)","linear-gradient(135deg,#f3c969,#f5ead4)","linear-gradient(135deg,#84b79d,#1e582e)",
-    "linear-gradient(135deg,#f5ead4,#f3c969)","linear-gradient(135deg,#2c3a31,#84b79d)","linear-gradient(135deg,#1e582e,#f3c969)",
-    "linear-gradient(135deg,#84b79d,#f5ead4)","linear-gradient(135deg,#f3c969,#1e582e)","linear-gradient(135deg,#1e582e,#84b79d)",
-    "linear-gradient(135deg,#f3c969,#f5ead4)","linear-gradient(135deg,#84b79d,#1e582e)","linear-gradient(135deg,#f5ead4,#f3c969)",
-    "linear-gradient(135deg,#2c3a31,#84b79d)","linear-gradient(135deg,#1e582e,#f3c969)","linear-gradient(135deg,#84b79d,#f5ead4)",
-  ];
-  return (
-    <>
-      <div className="crumbs"><span className="current">{t.app.sb.photos}</span></div>
-      <h1 className="app-h1">{t.app.sb.photos}</h1>
-      <div className="app-sub">{lang === "es" ? "Abril 2026 · 1,284 fotos" : "April 2026 · 1,284 photos"}</div>
-      <div className="app-photogrid" style={{ marginTop: 24 }}>
-        {grads.map((g, i) => (
-          <div key={i} className="photo-tile" style={{ background: g }}>
-            <div className="name">IMG_{4500 + i}.jpg</div>
-          </div>
-        ))}
-      </div>
-    </>
-  );
-};
-
-const CalendarView = ({ t, lang }) => {
-  const days = ["L", "M", "M", "J", "V", "S", "D"];
-  const events = [
-    { day: 11, title: lang === "es" ? "Reunión equipo" : "Team meeting", color: "var(--green)" },
-    { day: 14, title: "1:1 Mariana", color: "var(--green-deep)" },
-    { day: 18, title: lang === "es" ? "Demo cliente" : "Client demo", color: "var(--papel)" },
-    { day: 22, title: lang === "es" ? "Cierre Q2" : "Q2 close", color: "var(--green)" },
-  ];
+const CalendarView = ({ t }) => {
+  const cal = t.app.calendar;
+  const days = cal.days;
+  const events = cal.events;
   return (
     <>
       <div className="crumbs"><span className="current">{t.app.sb.calendar}</span></div>
-      <h1 className="app-h1">{lang === "es" ? "Abril 2026" : "April 2026"}</h1>
-      <div className="app-sub">{lang === "es" ? "Semana 17" : "Week 17"} · 4 {lang === "es" ? "eventos" : "events"}</div>
+      <h1 className="app-h1">{cal.title}</h1>
+      <div className="app-sub">{cal.sub} · {events.length} {cal.eventsLabel}</div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 8, marginTop: 24, fontFamily: "var(--mono)", fontSize: 11, color: "var(--mute)", textAlign: "center", marginBottom: 8 }}>
         {days.map((d, i) => <div key={i}>{d}</div>)}
@@ -299,7 +276,7 @@ const ContactsView = ({ t }) => {
     <>
       <div className="crumbs"><span className="current">{t.app.sb.contacts}</span></div>
       <h1 className="app-h1">{t.app.sb.contacts}</h1>
-      <div className="app-sub">{contacts.length} contactos · CardDAV sincronizado</div>
+      <div className="app-sub">{contacts.length} {t.app.contacts.sub}</div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12, marginTop: 24 }}>
         {contacts.map(([i, n, e, p]) => (
           <div key={n} style={{ background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: 12, padding: 16, display: "flex", gap: 12, alignItems: "center" }}>
@@ -327,15 +304,15 @@ const TalkView = ({ t }) => {
     <>
       <div className="crumbs"><span className="current">{t.app.sb.talk}</span></div>
       <h1 className="app-h1">{t.app.sb.talk}</h1>
-      <div className="app-sub">2 conversaciones nuevas · cifrado E2EE</div>
+      <div className="app-sub">{t.app.talk.sub}</div>
       <div style={{ marginTop: 24, background: "var(--bg-2)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden" }}>
-        {chats.map(([i, n, m, t, unread], idx) => (
+        {chats.map(([i, n, m, ts, unread], idx) => (
           <div key={idx} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderBottom: idx < chats.length - 1 ? "1px solid var(--border)" : 0, cursor: "pointer" }}>
             <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg, var(--green-deep), var(--green))", display: "grid", placeItems: "center", fontWeight: 600, color: "#062014", fontSize: 14 }}>{i}</div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontWeight: 500, fontSize: 14 }}>{n}</span>
-                <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--mute)" }}>{t}</span>
+                <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--mute)" }}>{ts}</span>
               </div>
               <div style={{ fontSize: 13, color: unread ? "var(--ink-2)" : "var(--mute)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m}</div>
             </div>
@@ -360,6 +337,9 @@ const EmptyView = ({ title, sub }) => (
 );
 
 const FilePreview = ({ file, onClose, t, lang, user }) => {
+  const p = t.app.preview;
+  const sharedName = (s) => s === "MR" ? "Mariana Reyes" : s === "DH" ? "Diego Hernández" : "Sofía Cortés";
+  const firstName = (s) => sharedName(s).split(" ")[0];
   return (
     <div className="file-preview" onClick={onClose}>
       <div className="fp-main" onClick={e => e.stopPropagation()}>
@@ -384,56 +364,56 @@ const FilePreview = ({ file, onClose, t, lang, user }) => {
             </div>
           </div>
         ) : (
-          <div className="fp-content"><h1>{file.name}</h1><p>{lang === "es" ? "Vista previa no disponible." : "Preview not available."}</p></div>
+          <div className="fp-content"><h1>{file.name}</h1><p>{p.unavailable}</p></div>
         )}
       </div>
       <aside className="fp-side" onClick={e => e.stopPropagation()}>
-        <div className="label">{lang === "es" ? "Detalles" : "Details"}</div>
+        <div className="label">{p.details}</div>
         <h3>{file.name}</h3>
         <div style={{ marginTop: 16 }}>
-          <div className="file-meta-row"><span className="k">{lang === "es" ? "Tamaño" : "Size"}</span><span className="v">{file.size}</span></div>
-          <div className="file-meta-row"><span className="k">{lang === "es" ? "Modificado" : "Modified"}</span><span className="v">{lang === "es" ? file.modified : file.modifiedEn}</span></div>
-          <div className="file-meta-row"><span className="k">{lang === "es" ? "Tipo" : "Type"}</span><span className="v">{file.type}</span></div>
-          <div className="file-meta-row"><span className="k">{lang === "es" ? "Cifrado" : "Encryption"}</span><span className="v" style={{ color: "var(--green)" }}>{file.encrypted ? "E2EE AES-256" : "—"}</span></div>
+          <div className="file-meta-row"><span className="k">{p.size}</span><span className="v">{file.size}</span></div>
+          <div className="file-meta-row"><span className="k">{p.modified}</span><span className="v">{lang === "es" ? file.modified : file.modifiedEn}</span></div>
+          <div className="file-meta-row"><span className="k">{p.type}</span><span className="v">{file.type}</span></div>
+          <div className="file-meta-row"><span className="k">{p.encryption}</span><span className="v" style={{ color: "var(--green)" }}>{file.encrypted ? "E2EE AES-256" : "—"}</span></div>
         </div>
 
         <div className="fp-actions">
-          <button className="primary"><Icon name="share" size={14}/> {lang === "es" ? "Compartir enlace" : "Share link"}</button>
-          <button><Icon name="download" size={14}/> {lang === "es" ? "Descargar" : "Download"}</button>
-          <button><Icon name="star" size={14}/> {file.starred ? (lang === "es" ? "Quitar" : "Unstar") : (lang === "es" ? "Favorito" : "Star")}</button>
+          <button className="primary"><Icon name="share" size={14}/> {p.shareLink}</button>
+          <button><Icon name="download" size={14}/> {p.download}</button>
+          <button><Icon name="star" size={14}/> {file.starred ? p.unstar : p.star}</button>
         </div>
 
-        <div className="label">{lang === "es" ? "Compartido con" : "Shared with"}</div>
+        <div className="label">{p.sharedWith}</div>
         {file.shared.length > 0 ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {file.shared.map((s, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", background: "var(--panel)", borderRadius: 8 }}>
                 <div style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg, var(--green-deep), var(--green))", display: "grid", placeItems: "center", fontWeight: 600, color: "#062014", fontSize: 11 }}>{s}</div>
                 <div>
-                  <div style={{ fontSize: 12 }}>{s === "MR" ? "Mariana Reyes" : s === "DH" ? "Diego Hernández" : "Sofía Cortés"}</div>
-                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--mute)" }}>{lang === "es" ? "Editor" : "Editor"}</div>
+                  <div style={{ fontSize: 12 }}>{sharedName(s)}</div>
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--mute)" }}>Editor</div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div style={{ fontSize: 12, color: "var(--mute)" }}>{lang === "es" ? "Solo tú" : "Only you"}</div>
+          <div style={{ fontSize: 12, color: "var(--mute)" }}>{p.onlyYou}</div>
         )}
 
-        <div className="label">{lang === "es" ? "Actividad" : "Activity"}</div>
+        <div className="label">{p.activity}</div>
         <div className="activity-item">
           <div className="av">{(user?.name || "U").split(" ").map(s => s[0]).slice(0,2).join("").toUpperCase()}</div>
           <div>
-            <div className="text"><b>{lang === "es" ? "Tú" : "You"}</b> {lang === "es" ? "abriste este archivo" : "opened this file"}</div>
-            <div className="time">{lang === "es" ? "ahora" : "now"}</div>
+            <div className="text"><b>{p.you}</b> {p.openedFile}</div>
+            <div className="time">{p.now}</div>
           </div>
         </div>
         {file.shared[0] && (
           <div className="activity-item">
             <div className="av">{file.shared[0]}</div>
             <div>
-              <div className="text"><b>{file.shared[0] === "MR" ? "Mariana" : file.shared[0] === "DH" ? "Diego" : "Sofía"}</b> {lang === "es" ? "editó el documento" : "edited the document"}</div>
-              <div className="time">{lang === "es" ? "hace 2h" : "2h ago"}</div>
+              <div className="text"><b>{firstName(file.shared[0])}</b> {p.edited}</div>
+              <div className="time">{p.hours2Ago}</div>
             </div>
           </div>
         )}

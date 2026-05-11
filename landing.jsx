@@ -1,7 +1,8 @@
 // Landing page components
 import React from "react";
-import ReactDOM from "react-dom";
+import { createPortal } from "react-dom";
 import { Icon } from "./icons.jsx";
+import { CONTACT, GRADIENTS } from "./config.js";
 
 export const NavBar = ({ t, lang, setLang, onLogin, onSignup }) => {
   const [open, setOpen] = React.useState(false);
@@ -37,7 +38,7 @@ export const NavBar = ({ t, lang, setLang, onLogin, onSignup }) => {
           </button>
         </div>
       </div>
-      {open && ReactDOM.createPortal(
+      {open && createPortal(
         <div className="nav-drawer" onClick={close}>
           <div className="nav-drawer-inner" onClick={e => e.stopPropagation()}>
             <a href="#features" onClick={close}>{t.nav.features}</a>
@@ -344,36 +345,180 @@ const DashboardPreview = () => (
   </div>
 );
 
-export const PricingSection = ({ t, onSignup }) => (
-  <section id="pricing">
-    <div className="container">
-      <div className="section-head">
-        <div className="left">
-          <div className="eyebrow">{t.pricing.eyebrow}</div>
-          <h2 className="h-section">{t.pricing.titlePart1}<br/>{t.pricing.titlePart2}</h2>
-        </div>
-        <div className="right">{t.pricing.sub}</div>
-      </div>
-      <div className="pricing-grid">
-        {t.pricing.plans.map((p, i) => (
-          <div key={i} className={"price-card" + (p.featured ? " featured" : "")}>
-            {p.featured && <div className="featured-tag">★ Popular</div>}
-            <div className="plan-name">{p.name}</div>
-            <div className="plan-tag">{p.tag}</div>
-            <div className="price">{p.price}</div>
-            <div className="price-sub">{p.per}</div>
-            <ul>
-              {p.features.map((f, j) => <li key={j}>{f}</li>)}
-            </ul>
-            <button className={"btn " + (p.featured ? "btn-primary" : "btn-ghost")} onClick={onSignup}>
-              {p.cta}
-            </button>
+export const PricingSection = ({ t, onSignup }) => {
+  const [payPlan, setPayPlan] = React.useState(null);
+
+  const handlePlanClick = (plan) => {
+    if (plan.action === "checkout") {
+      setPayPlan(plan);
+    } else if (plan.action === "contact") {
+      window.location.href = "mailto:hi@pixqui.cloud?subject=Plan%20Empresa%20%E2%80%94%20PixquiCloud";
+    } else {
+      onSignup();
+    }
+  };
+
+  return (
+    <section id="pricing">
+      <div className="container">
+        <div className="section-head">
+          <div className="left">
+            <div className="eyebrow">{t.pricing.eyebrow}</div>
+            <h2 className="h-section">{t.pricing.titlePart1}<br/>{t.pricing.titlePart2}</h2>
           </div>
-        ))}
+          <div className="right">{t.pricing.sub}</div>
+        </div>
+        <div className="pricing-grid">
+          {t.pricing.plans.map((p, i) => (
+            <div key={i} className={"price-card" + (p.featured ? " featured" : "")}>
+              {p.featured && <div className="featured-tag">★ Popular</div>}
+              <div className="plan-name">{p.name}</div>
+              <div className="plan-tag">{p.tag}</div>
+              <div className="price">{p.price}</div>
+              <div className="price-sub">{p.per}</div>
+              <ul>
+                {p.features.map((f, j) => <li key={j}>{f}</li>)}
+              </ul>
+              <button className={"btn " + (p.featured ? "btn-primary" : "btn-ghost")} onClick={() => handlePlanClick(p)}>
+                {p.cta}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+      {payPlan && <PaymentModal t={t} plan={payPlan} onClose={() => setPayPlan(null)} />}
+    </section>
+  );
+};
+
+export const PaymentModal = ({ t, plan, onClose }) => {
+  const [method, setMethod] = React.useState(null); // null | 'mercadopago' | 'stripe'
+  const [form, setForm] = React.useState({ name: "", email: "" });
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(null);
+  const p = t.pay;
+
+  const stripeMethods = ["stripe", "applepay", "googlepay"];
+  const endpoint = stripeMethods.includes(method) ? "/api/stripe/checkout" : "/api/subscription/create";
+
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [onClose]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.email.trim()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          planId: plan.id,
+          payer: { name: form.name.trim(), email: form.email.trim() },
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const url = data.url || data.init_point || data.sandbox_init_point;
+      if (!url) throw new Error("missing checkout url");
+      window.location.href = url;
+    } catch (err) {
+      console.error(err);
+      setError(p.form.error);
+      setLoading(false);
+    }
+  };
+
+  return createPortal(
+    <div className="contact-overlay" onClick={onClose}>
+      <div className="contact-modal pay-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true">
+        <button className="contact-close" onClick={onClose} aria-label={p.close}>×</button>
+
+        {!method && (
+          <>
+            <h3>{p.title}</h3>
+            <p className="contact-sub">{p.sub} · <strong style={{ color: "var(--green)" }}>{plan.name} {plan.price}</strong></p>
+            <div className="contact-options">
+              <button className="contact-option" onClick={() => setMethod("mercadopago")}>
+                <Icon name="zap" size={20} />
+                <div>
+                  <strong>{p.methods.mercadopago.name}</strong>
+                  <span>{p.methods.mercadopago.desc}</span>
+                </div>
+              </button>
+              <button className="contact-option" onClick={() => setMethod("stripe")}>
+                <Icon name="lock" size={20} />
+                <div>
+                  <strong>{p.methods.stripe.name}</strong>
+                  <span>{p.methods.stripe.desc}</span>
+                </div>
+              </button>
+              <button className="contact-option" onClick={() => setMethod("applepay")}>
+                <Icon name="apple" size={20} />
+                <div>
+                  <strong>{p.methods.applepay.name}</strong>
+                  <span>{p.methods.applepay.desc}</span>
+                </div>
+              </button>
+              <button className="contact-option" onClick={() => setMethod("googlepay")}>
+                <Icon name="google" size={20} />
+                <div>
+                  <strong>{p.methods.googlepay.name}</strong>
+                  <span>{p.methods.googlepay.desc}</span>
+                </div>
+              </button>
+            </div>
+          </>
+        )}
+
+        {(method === "mercadopago" || stripeMethods.includes(method)) && (
+          <>
+            <h3>{p.form.title}</h3>
+            <p className="contact-sub">
+              <button onClick={() => setMethod(null)} className="pay-back">← {p.form.back}</button>
+            </p>
+            <form className="pay-form" onSubmit={handleSubmit}>
+              <label>
+                <span>{p.form.plan}</span>
+                <input type="text" value={`${plan.name} — ${plan.price} ${plan.per}`} disabled />
+              </label>
+              <label>
+                <span>{p.form.name}</span>
+                <input
+                  type="text"
+                  required
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  autoFocus
+                />
+              </label>
+              <label>
+                <span>{p.form.email}</span>
+                <input
+                  type="email"
+                  required
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </label>
+              {error && <div className="pay-error">{error}</div>}
+              <p className="pay-disclaimer">{p.form.disclaimer}</p>
+              <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: "100%", justifyContent: "center" }}>
+                {loading ? p.form.loading : p.form.submit}
+              </button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>,
+    document.body
+  );
+};
 
 export const PrivacySection = ({ t }) => {
   const beforeText = `Q2-roadmap.md
@@ -511,18 +656,8 @@ export const MobileSection = ({ t }) => (
             <div style={{ height: 44, paddingTop: 16, fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, textAlign: "center" }}>9:41</div>
             <div style={{ padding: "16px 20px", fontFamily: "var(--display)", fontSize: 24, fontWeight: 600 }}>Fotos</div>
             <div style={{ padding: "0 12px", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 4 }}>
-              {[
-                "linear-gradient(135deg,#1e582e,#84b79d)",
-                "linear-gradient(135deg,#f3c969,#f5ead4)",
-                "linear-gradient(135deg,#84b79d,#1e582e)",
-                "linear-gradient(135deg,#f5ead4,#f3c969)",
-                "linear-gradient(135deg,#2c3a31,#84b79d)",
-                "linear-gradient(135deg,#1e582e,#f3c969)",
-                "linear-gradient(135deg,#84b79d,#f5ead4)",
-                "linear-gradient(135deg,#f3c969,#1e582e)",
-                "linear-gradient(135deg,#1e582e,#84b79d)",
-              ].map((g,i) => (
-                <div key={i} style={{ aspectRatio: 1, borderRadius: 4, background: g }}></div>
+              {Array.from({ length: 9 }).map((_, i) => (
+                <div key={i} style={{ aspectRatio: 1, borderRadius: 4, background: GRADIENTS[i % GRADIENTS.length] }}></div>
               ))}
             </div>
           </div>
@@ -537,13 +672,13 @@ export const MobileSection = ({ t }) => (
                 ["DH", "Diego", "📷 enviada", "8:14"],
                 ["SC", "Sofía", "nos vemos jueves", "ayer"],
                 ["EQ", "Equipo Polígono", "5 mensajes nuevos", "ayer"],
-              ].map(([i, n, m, t], idx) => (
+              ].map(([i, n, m, ts], idx) => (
                 <div key={idx} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: "1px solid var(--border)" }}>
                   <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg, var(--green-deep), var(--green))", display: "grid", placeItems: "center", fontSize: 12, fontWeight: 600, color: "#062014" }}>{i}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 500 }}>
                       <span>{n}</span>
-                      <span style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--mute)" }}>{t}</span>
+                      <span style={{ fontFamily: "var(--mono)", fontSize: 9, color: "var(--mute)" }}>{ts}</span>
                     </div>
                     <div style={{ fontSize: 11, color: "var(--mute)" }}>{m}</div>
                   </div>
@@ -626,14 +761,6 @@ export const FinalCTA = ({ t, onSignup }) => (
   </section>
 );
 
-const CONTACT = {
-  phone: "+52 55 2485 2797",
-  phoneTel: "+525524852797",
-  whatsapp: "+52 720 655 0610",
-  whatsappWa: "527206550610",
-  email: "hi@pixqui.cloud",
-};
-
 export const ContactModal = ({ t, onClose }) => {
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
@@ -643,7 +770,7 @@ export const ContactModal = ({ t, onClose }) => {
   }, [onClose]);
   const c = t.footer.contact;
   const waMsg = encodeURIComponent("Hola PixquiCloud, me gustaría más información.");
-  return ReactDOM.createPortal(
+  return createPortal(
     <div className="contact-overlay" onClick={onClose}>
       <div className="contact-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="contact-title">
         <button className="contact-close" onClick={onClose} aria-label={c.close}>×</button>
