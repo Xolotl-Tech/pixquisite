@@ -11,7 +11,6 @@ export const PLANS = {
     currency_id: "MXN",
     frequency: 1,
     frequency_type: "months",
-    stripe_price_id: process.env.STRIPE_PRICE_PRO,
   },
   familia: {
     id: "familia",
@@ -21,6 +20,5 @@ export const PLANS = {
     currency_id: "MXN",
     frequency: 1,
     frequency_type: "months",
-    stripe_price_id: process.env.STRIPE_PRICE_FAMILIA,
   },
 };

@@ -205,14 +205,7 @@ export const I18N = {
       },
     },
     pay: {
-      title: "Elige cómo pagar",
-      sub: "Eliges el método y completas tus datos en el siguiente paso.",
-      methods: {
-        mercadopago: { name: "Mercado Pago", desc: "Tarjeta, OXXO, SPEI o saldo MP", badge: "" },
-        stripe: { name: "Stripe", desc: "Tarjeta de crédito o débito", badge: "" },
-        applepay: { name: "Apple Pay", desc: "Paga con tu iPhone o Mac", badge: "" },
-        googlepay: { name: "Google Pay", desc: "Paga con tu cuenta Google", badge: "" },
-      },
+      sub: "Pago vía Mercado Pago. Acepta tarjeta, OXXO, SPEI o saldo MP.",
       form: {
         title: "Activa tu suscripción",
         name: "Nombre completo",
@@ -221,7 +214,6 @@ export const I18N = {
         submit: "Continuar al pago",
         loading: "Redirigiendo a Mercado Pago…",
         error: "No se pudo iniciar el pago. Intenta de nuevo o escríbenos a hi@pixqui.cloud",
-        back: "Cambiar método",
         disclaimer: "Suscripción mensual. Se cobra cada mes a tu método de pago. Puedes cancelar cuando quieras desde la sección \"Cancelar suscripción\" en el footer — sin letra chica ni penalizaciones.",
       },
       close: "Cerrar",
@@ -449,14 +441,7 @@ export const I18N = {
       },
     },
     pay: {
-      title: "Choose how to pay",
-      sub: "Pick a method and fill your details on the next step.",
-      methods: {
-        mercadopago: { name: "Mercado Pago", desc: "Card, OXXO, SPEI or MP balance", badge: "" },
-        stripe: { name: "Stripe", desc: "Credit or debit card", badge: "" },
-        applepay: { name: "Apple Pay", desc: "Pay with your iPhone or Mac", badge: "" },
-        googlepay: { name: "Google Pay", desc: "Pay with your Google account", badge: "" },
-      },
+      sub: "Payment via Mercado Pago. Accepts card, OXXO, SPEI or MP balance.",
       form: {
         title: "Activate your subscription",
         name: "Full name",
@@ -465,7 +450,6 @@ export const I18N = {
         submit: "Continue to payment",
         loading: "Redirecting to Mercado Pago…",
         error: "Could not start payment. Try again or write us at hi@pixqui.cloud",
-        back: "Change method",
         disclaimer: "Monthly subscription. Charged every month to your payment method. Cancel anytime from the \"Cancel subscription\" link in the footer — no fine print, no fees.",
       },
       close: "Close",
