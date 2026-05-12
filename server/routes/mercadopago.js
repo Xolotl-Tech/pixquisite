@@ -14,6 +14,17 @@ const preApproval = new PreApproval(client);
 const baseUrl = () =>
   process.env.PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 5173}`;
 
+// In-memory idempotency cache for /subscription/create. Survives single-process
+// restarts only; for multi-instance deploys swap for Redis/SQLite.
+const IDEMPOTENCY_TTL_MS = 5 * 60 * 1000;
+const idempotencyCache = new Map();
+setInterval(() => {
+  const now = Date.now();
+  for (const [k, v] of idempotencyCache) {
+    if (now - v.ts > IDEMPOTENCY_TTL_MS) idempotencyCache.delete(k);
+  }
+}, 60_000).unref();
+
 // POST /api/subscription/create
 // body: { planId, payer: { email, name } }
 // returns: { id, init_point }
@@ -24,10 +35,19 @@ router.post("/subscription/create", async (req, res) => {
     if (!plan) return res.status(400).json({ error: "Plan inválido" });
     if (!payer?.email) return res.status(400).json({ error: "Falta email del pagador" });
 
+    // Idempotency: dedupe rapid double-submits (double-click, refresh) per
+    // (planId, email) for 5 minutes. Returns the previously-created init_point
+    // instead of charging the user twice.
+    const dedupeKey = `${plan.id}:${payer.email.toLowerCase()}`;
+    const cached = idempotencyCache.get(dedupeKey);
+    if (cached && Date.now() - cached.ts < IDEMPOTENCY_TTL_MS) {
+      return res.json(cached.payload);
+    }
+
     const result = await preApproval.create({
       body: {
         reason: `PixquiCloud — ${plan.title}`,
-        external_reference: `${plan.id}-${Date.now()}`,
+        external_reference: `${plan.id}-${crypto.randomUUID()}`,
         payer_email: payer.email,
         back_url: `${baseUrl()}/success.html`,
         notification_url: `${baseUrl()}/api/webhooks/mercadopago`,
@@ -41,11 +61,14 @@ router.post("/subscription/create", async (req, res) => {
       },
     });
 
-    return res.json({
+    const payload = {
       id: result.id,
       init_point: result.init_point,
       status: result.status,
-    });
+    };
+    idempotencyCache.set(dedupeKey, { ts: Date.now(), payload });
+
+    return res.json(payload);
   } catch (err) {
     console.error("[mercadopago] subscription/create error:", err);
     const dev = process.env.NODE_ENV !== "production";
