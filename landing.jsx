@@ -392,14 +392,10 @@ export const PricingSection = ({ t, onSignup }) => {
 };
 
 export const PaymentModal = ({ t, plan, onClose }) => {
-  const [method, setMethod] = React.useState(null); // null | 'mercadopago' | 'stripe'
   const [form, setForm] = React.useState({ name: "", email: "" });
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
   const p = t.pay;
-
-  const stripeMethods = ["stripe", "applepay", "googlepay"];
-  const endpoint = stripeMethods.includes(method) ? "/api/stripe/checkout" : "/api/subscription/create";
 
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
@@ -414,7 +410,7 @@ export const PaymentModal = ({ t, plan, onClose }) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(endpoint, {
+      const res = await fetch("/api/subscription/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -424,8 +420,8 @@ export const PaymentModal = ({ t, plan, onClose }) => {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      const url = data.url || data.init_point || data.sandbox_init_point;
-      if (!url) throw new Error("missing checkout url");
+      const url = data.init_point || data.sandbox_init_point;
+      if (!url) throw new Error("missing init_point");
       window.location.href = url;
     } catch (err) {
       console.error(err);
@@ -439,81 +435,38 @@ export const PaymentModal = ({ t, plan, onClose }) => {
       <div className="contact-modal pay-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true">
         <button className="contact-close" onClick={onClose} aria-label={p.close}>×</button>
 
-        {!method && (
-          <>
-            <h3>{p.title}</h3>
-            <p className="contact-sub">{p.sub} · <strong style={{ color: "var(--green)" }}>{plan.name} {plan.price}</strong></p>
-            <div className="contact-options">
-              <button className="contact-option" onClick={() => setMethod("mercadopago")}>
-                <Icon name="zap" size={20} />
-                <div>
-                  <strong>{p.methods.mercadopago.name}</strong>
-                  <span>{p.methods.mercadopago.desc}</span>
-                </div>
-              </button>
-              <button className="contact-option" onClick={() => setMethod("stripe")}>
-                <Icon name="lock" size={20} />
-                <div>
-                  <strong>{p.methods.stripe.name}</strong>
-                  <span>{p.methods.stripe.desc}</span>
-                </div>
-              </button>
-              <button className="contact-option" onClick={() => setMethod("applepay")}>
-                <Icon name="apple" size={20} />
-                <div>
-                  <strong>{p.methods.applepay.name}</strong>
-                  <span>{p.methods.applepay.desc}</span>
-                </div>
-              </button>
-              <button className="contact-option" onClick={() => setMethod("googlepay")}>
-                <Icon name="google" size={20} />
-                <div>
-                  <strong>{p.methods.googlepay.name}</strong>
-                  <span>{p.methods.googlepay.desc}</span>
-                </div>
-              </button>
-            </div>
-          </>
-        )}
-
-        {(method === "mercadopago" || stripeMethods.includes(method)) && (
-          <>
-            <h3>{p.form.title}</h3>
-            <p className="contact-sub">
-              <button onClick={() => setMethod(null)} className="pay-back">← {p.form.back}</button>
-            </p>
-            <form className="pay-form" onSubmit={handleSubmit}>
-              <label>
-                <span>{p.form.plan}</span>
-                <input type="text" value={`${plan.name} — ${plan.price} ${plan.per}`} disabled />
-              </label>
-              <label>
-                <span>{p.form.name}</span>
-                <input
-                  type="text"
-                  required
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  autoFocus
-                />
-              </label>
-              <label>
-                <span>{p.form.email}</span>
-                <input
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                />
-              </label>
-              {error && <div className="pay-error">{error}</div>}
-              <p className="pay-disclaimer">{p.form.disclaimer}</p>
-              <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: "100%", justifyContent: "center" }}>
-                {loading ? p.form.loading : p.form.submit}
-              </button>
-            </form>
-          </>
-        )}
+        <h3>{p.form.title}</h3>
+        <p className="contact-sub">{p.sub} · <strong style={{ color: "var(--green)" }}>{plan.name} {plan.price}</strong></p>
+        <form className="pay-form" onSubmit={handleSubmit}>
+          <label>
+            <span>{p.form.plan}</span>
+            <input type="text" value={`${plan.name} — ${plan.price} ${plan.per}`} disabled />
+          </label>
+          <label>
+            <span>{p.form.name}</span>
+            <input
+              type="text"
+              required
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              autoFocus
+            />
+          </label>
+          <label>
+            <span>{p.form.email}</span>
+            <input
+              type="email"
+              required
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+          </label>
+          {error && <div className="pay-error">{error}</div>}
+          <p className="pay-disclaimer">{p.form.disclaimer}</p>
+          <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: "100%", justifyContent: "center" }}>
+            {loading ? p.form.loading : p.form.submit}
+          </button>
+        </form>
       </div>
     </div>,
     document.body
