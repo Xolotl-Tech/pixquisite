@@ -234,6 +234,34 @@ export const I18N = {
       next: "Próximo cobro",
       amount: "Monto",
     },
+    result: {
+      backHome: "Volver al inicio",
+      goToCloud: "Ir a mi nube",
+      tryAgain: "Probar de nuevo",
+      refId: "Referencia",
+      success: {
+        title: "Pago",
+        titleAccent: "aprobado.",
+        body: "Te enviamos un correo con los detalles de tu cuenta y los siguientes pasos. Si no lo ves en unos minutos, revisa tu carpeta de spam.",
+      },
+      pending: {
+        title: "Pago",
+        titleAccent: "pendiente.",
+        body: "Tu pago está en proceso. Suele tardar unos minutos mientras tu banco lo autoriza. Te avisaremos por correo cuando se confirme.",
+      },
+      failure: {
+        title: "No pudimos",
+        titleAccent: "completar tu pago.",
+        bodyPre: "El pago fue rechazado o cancelado. Si crees que es un error, escríbenos a ",
+        bodyEmail: "hi@pixqui.cloud",
+        bodyPost: " o intenta de nuevo con otro método.",
+      },
+      unknown: {
+        title: "Estado",
+        titleAccent: "desconocido.",
+        body: "No pudimos confirmar el estado de tu pago. Si tu suscripción no aparece en tu correo en unos minutos, escríbenos a hi@pixqui.cloud.",
+      },
+    },
   },
   en: {
     nav: { features: "Features", pricing: "Pricing", privacy: "Privacy", apps: "Apps", login: "Sign in", signup: "Get started" },
@@ -469,6 +497,34 @@ export const I18N = {
       error: "Something went wrong. Write us at hi@pixqui.cloud.",
       next: "Next charge",
       amount: "Amount",
+    },
+    result: {
+      backHome: "Back to home",
+      goToCloud: "Go to my cloud",
+      tryAgain: "Try again",
+      refId: "Reference",
+      success: {
+        title: "Payment",
+        titleAccent: "approved.",
+        body: "We sent you an email with your account details and next steps. If you don't see it in a few minutes, check your spam folder.",
+      },
+      pending: {
+        title: "Payment",
+        titleAccent: "pending.",
+        body: "Your payment is being processed. It usually takes a few minutes while your bank authorizes it. We'll email you when it clears.",
+      },
+      failure: {
+        title: "We couldn't",
+        titleAccent: "complete your payment.",
+        bodyPre: "The payment was declined or cancelled. If you think this is a mistake, write us at ",
+        bodyEmail: "hi@pixqui.cloud",
+        bodyPost: " or try again with another method.",
+      },
+      unknown: {
+        title: "Status",
+        titleAccent: "unknown.",
+        body: "We couldn't confirm your payment status. If your subscription doesn't show up in your email within a few minutes, write us at hi@pixqui.cloud.",
+      },
     },
   },
 };
