@@ -35,6 +35,16 @@ router.post("/subscription/create", async (req, res) => {
     if (!plan) return res.status(400).json({ error: "Plan inválido" });
     if (!payer?.email) return res.status(400).json({ error: "Falta email del pagador" });
 
+    // MP rejects PreApproval back_url/notification_url unless they're HTTPS
+    // and publicly reachable. Fail fast with a clear message instead of
+    // bouncing through the SDK to a 400 from MP saying "must be a valid URL".
+    if (!/^https:\/\//i.test(baseUrl())) {
+      console.error(`[mercadopago] PUBLIC_BASE_URL must be HTTPS, got: ${baseUrl()}`);
+      return res.status(500).json({
+        error: "Configuración inválida: PUBLIC_BASE_URL debe ser HTTPS para que Mercado Pago acepte back_url y notification_url. Para dev local usa un túnel (ngrok/cloudflared) o apunta a tu dominio de producción.",
+      });
+    }
+
     // Idempotency: dedupe rapid double-submits (double-click, refresh) per
     // (planId, email) for 5 minutes. Returns the previously-created init_point
     // instead of charging the user twice.
