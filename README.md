@@ -71,20 +71,16 @@ Sitio **estático**, sin paso de build. React se carga vía CDN y los archivos `
 
 ## Desarrollo local
 
-Los recursos deben servirse por HTTP, no abriendo el `.html` con `file://`, ya que la CSP y la carga de scripts externos lo requieren.
-
 ```bash
-# Opción 1 — Python
-python3 -m http.server 8000
-
-# Opción 2 — Node
-npx serve .
-
-# Opción 3 — PHP
-php -S localhost:8000
+npm run dev
 ```
 
-Después abre <http://localhost:8000/>.
+Para verificar el build de producción localmente:
+
+```bash
+npm run build
+npm run preview
+```
 
 ### Requisitos
 
