@@ -70,17 +70,17 @@ export const ResultView = ({ defaultKind }) => {
           <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 32, flexWrap: "wrap" }}>
             {kind === "success" && (
               <>
-                <a href="index.html" className="btn btn-primary">{t.backHome}</a>
+                <a href="/" className="btn btn-primary">{t.backHome}</a>
                 <a href="https://app.pixqui.cloud/" className="btn btn-ghost">{t.goToCloud}</a>
               </>
             )}
             {kind === "pending" && (
-              <a href="index.html" className="btn btn-primary">{t.backHome}</a>
+              <a href="/" className="btn btn-primary">{t.backHome}</a>
             )}
             {(kind === "failure" || kind === "unknown") && (
               <>
-                <a href="index.html#pricing" className="btn btn-primary">{t.tryAgain}</a>
-                <a href="index.html" className="btn btn-ghost">{t.backHome}</a>
+                <a href="/#pricing" className="btn btn-primary">{t.tryAgain}</a>
+                <a href="/" className="btn btn-ghost">{t.backHome}</a>
               </>
             )}
           </div>

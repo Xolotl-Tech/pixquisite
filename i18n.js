@@ -117,7 +117,7 @@ export const I18N = {
       email: "hi@pixqui.cloud",
       cols: [
         { title: "Compañía", links: [{label: "Quienes somos", href: "https://xolotl.tech/"}, {label: "Trabaja con nosotros", href: "https://xolotl.tech/unete"}, {label: "Contáctanos", href: "#contact"}] },
-        { title: "Legal", links: [{label: "Políticas de privacidad", href: "privacidad.html"}, {label: "Términos & Condiciones", href: "terminos.html"}, {label: "Condiciones de uso", href: "condiciones.html"}, {label: "Cancelar suscripción", href: "cancelar.html"}] },
+        { title: "Legal", links: [{label: "Políticas de privacidad", href: "/privacidad"}, {label: "Términos & Condiciones", href: "/terminos"}, {label: "Condiciones de uso", href: "/condiciones"}, {label: "Cancelar suscripción", href: "/cancelar"}] },
         { title: "Síguenos en", links: [{label: "Instagram", href: "https://www.instagram.com/xolotl_tech/"}, {label: "Tiktok", href: "https://www.tiktok.com/@xolotl_tech"}, {label: "Linkedin", href: "https://mx.linkedin.com/company/xolotl-tech"}/*, {label: "YouTube", href: "#"} */] },
       ],
       bottom: "© 2026 PixquiCloud · Hecho en México con software libre",
@@ -381,7 +381,7 @@ export const I18N = {
       email: "hi@pixqui.cloud",
       cols: [
         { title: "Company", links: [{label: "About us", href: "https://xolotl.tech/"}, {label: "Careers", href: "https://xolotl.tech/unete"}, {label: "Contact", href: "#contact"}] },
-        { title: "Legal", links: [{label: "Privacy policy", href: "privacidad.html"}, {label: "Terms & Conditions", href: "terminos.html"}, {label: "Terms of use", href: "condiciones.html"}, {label: "Cancel subscription", href: "cancelar.html"}] },
+        { title: "Legal", links: [{label: "Privacy policy", href: "/privacidad"}, {label: "Terms & Conditions", href: "/terminos"}, {label: "Terms of use", href: "/condiciones"}, {label: "Cancel subscription", href: "/cancelar"}] },
         { title: "Follow us", links: [{label: "Instagram", href: "https://www.instagram.com/xolotl_tech/"}, {label: "Tiktok", href: "https://www.tiktok.com/@xolotl_tech"}, {label: "Linkedin", href: "https://mx.linkedin.com/company/xolotl-tech"}/*, {label: "YouTube", href: "#"} */] },
       ],
       bottom: "© 2026 PixquiCloud · Made in Mexico with free software",

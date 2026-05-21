@@ -1,9 +1,43 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { resolve } from "path";
+
+// SPA fallback: rewrite navigation requests for clean routes to /index.html.
+// Runs before Vite's transform middleware so it intercepts HTML navigations
+// before the dev server tries to resolve /terminos → terminos.jsx, etc.
+// Skips requests that already have a file extension (module/asset requests).
+const spaFallback = {
+  name: "spa-fallback",
+  configureServer(server) {
+    server.middlewares.use((req, res, next) => {
+      if (
+        req.method === "GET" &&
+        req.headers.accept?.includes("text/html") &&
+        !req.url.startsWith("/api/") &&
+        !req.url.startsWith("/@") &&
+        !req.url.includes(".")
+      ) {
+        req.url = "/index.html";
+      }
+      next();
+    });
+  },
+  configurePreviewServer(server) {
+    server.middlewares.use((req, res, next) => {
+      if (
+        req.method === "GET" &&
+        req.headers.accept?.includes("text/html") &&
+        !req.url.startsWith("/api/") &&
+        !req.url.includes(".")
+      ) {
+        req.url = "/index.html";
+      }
+      next();
+    });
+  },
+};
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), spaFallback],
   esbuild: {
     loader: "jsx",
     include: /\.(jsx|js)$/,
@@ -18,20 +52,6 @@ export default defineConfig({
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
-      },
-    },
-  },
-  build: {
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, "index.html"),
-        privacidad: resolve(__dirname, "privacidad.html"),
-        terminos: resolve(__dirname, "terminos.html"),
-        condiciones: resolve(__dirname, "condiciones.html"),
-        success: resolve(__dirname, "success.html"),
-        pending: resolve(__dirname, "pending.html"),
-        failure: resolve(__dirname, "failure.html"),
-        cancelar: resolve(__dirname, "cancelar.html"),
       },
     },
   },
