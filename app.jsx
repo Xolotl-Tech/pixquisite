@@ -1,6 +1,4 @@
-// Root app — orchestrates landing and dashboard demo
 import React, { useState, useEffect } from "react";
-import { createRoot } from "react-dom/client";
 import { I18N } from "./i18n.js";
 import { Icon } from "./icons.jsx";
 import {
@@ -10,14 +8,33 @@ import {
 } from "./landing.jsx";
 import { ByteSection } from "./byte.jsx";
 import { Dashboard } from "./dashboard.jsx";
-import "./fonts.js";
 import "./styles.css";
 import "./app.css";
 import "./byte.css";
 
 const DEMO_USER = { name: "María González", email: "demo@pixqui.cloud", workspace: "demo", region: "MX-Centro" };
 
-const App = () => {
+const REVEAL_SELECTORS = [
+  "section .container > .section-head",
+  "section .feature",
+  "section .price-card",
+  "section .tm-card",
+  "section .faq-item",
+  ".byte-grid > div",
+  ".privacy-card",
+  ".phone",
+  ".preview-wrap",
+  ".final-cta .container > *",
+  ".hero-meta",
+  ".hero-cta",
+  ".hero h1",
+  ".hero .subtitle",
+  ".hero .eyebrow",
+  ".stats-strip",
+  "footer .footer-grid > *",
+];
+
+export const App = () => {
   const [lang, setLang] = useState(() => localStorage.getItem("pxq_lang") || "es");
   const [view, setView] = useState("landing");
   const [toast, setToast] = useState(null);
@@ -25,6 +42,40 @@ const App = () => {
   const t = I18N[lang];
 
   useEffect(() => { localStorage.setItem("pxq_lang", lang); }, [lang]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
+
+    const tag = () => {
+      document.querySelectorAll(REVEAL_SELECTORS.join(",")).forEach((el) => {
+        if (el.classList.contains("reveal")) return;
+        el.classList.add("reveal");
+        const idx = Array.from(el.parentElement.children).indexOf(el);
+        el.style.transitionDelay = (Math.min(idx, 5) * 70) + "ms";
+        observer.observe(el);
+      });
+    };
+
+    tag();
+    const t1 = setTimeout(tag, 100);
+    const t2 = setTimeout(tag, 400);
+    const mo = new MutationObserver(() => tag());
+    mo.observe(document.getElementById("root"), { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mo.disconnect();
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [view]);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -76,59 +127,3 @@ const App = () => {
     </>
   );
 };
-
-createRoot(document.getElementById("root")).render(<App />);
-
-// Scroll-reveal: fade in from bottom on scroll
-function setupReveal() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("in");
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12, rootMargin: "0px 0px -60px 0px" });
-
-  const tag = () => {
-    const selectors = [
-      "section .container > .section-head",
-      "section .feature",
-      "section .price-card",
-      "section .tm-card",
-      "section .faq-item",
-      ".byte-grid > div",
-      ".privacy-card",
-      ".phone",
-      ".preview-wrap",
-      ".final-cta .container > *",
-      ".hero-meta",
-      ".hero-cta",
-      ".hero h1",
-      ".hero .subtitle",
-      ".hero .eyebrow",
-      ".stats-strip",
-      "footer .footer-grid > *",
-    ];
-    document.querySelectorAll(selectors.join(",")).forEach((el) => {
-      if (el.classList.contains("reveal")) return;
-      el.classList.add("reveal");
-      const idx = Array.from(el.parentElement.children).indexOf(el);
-      el.style.transitionDelay = (Math.min(idx, 5) * 70) + "ms";
-      observer.observe(el);
-    });
-  };
-
-  tag();
-  setTimeout(tag, 100);
-  setTimeout(tag, 400);
-
-  const mo = new MutationObserver(() => tag());
-  mo.observe(document.getElementById("root"), { childList: true, subtree: true });
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", setupReveal);
-} else {
-  setupReveal();
-}

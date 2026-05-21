@@ -1,12 +1,10 @@
 // Self-service subscription cancellation page.
 import React, { useState } from "react";
-import { createRoot } from "react-dom/client";
 import { I18N } from "./i18n.js";
-import "./fonts.js";
 import "./styles.css";
 import "./legal.css";
 
-const CancelPage = () => {
+export const CancelPage = () => {
   const lang = localStorage.getItem("pxq_lang") || "es";
   const t = I18N[lang].cancel;
 
@@ -57,9 +55,9 @@ const CancelPage = () => {
     <main className="legal-page">
       <nav className="nav">
         <div className="container nav-inner">
-          <a href="index.html" className="logo-mark">PixquiCloud</a>
+          <a href="/" className="logo-mark">PixquiCloud</a>
           <div className="nav-actions">
-            <a href="index.html" className="btn btn-ghost btn-sm">Volver</a>
+            <a href="/" className="btn btn-ghost btn-sm">Volver</a>
           </div>
         </div>
       </nav>
@@ -130,5 +128,3 @@ const CancelPage = () => {
     </main>
   );
 };
-
-createRoot(document.getElementById("root")).render(<CancelPage />);

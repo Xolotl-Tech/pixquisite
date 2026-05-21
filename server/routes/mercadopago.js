@@ -59,7 +59,7 @@ router.post("/subscription/create", async (req, res) => {
         reason: `PixquiCloud — ${plan.title}`,
         external_reference: `${plan.id}-${crypto.randomUUID()}`,
         payer_email: payer.email,
-        back_url: `${baseUrl()}/success.html`,
+        back_url: `${baseUrl()}/success`,
         notification_url: `${baseUrl()}/api/webhooks/mercadopago`,
         auto_recurring: {
           frequency: plan.frequency,
