@@ -2,6 +2,9 @@
   RewriteEngine On
   RewriteBase /
 
+  # Proxy API requests to Node.js server
+  RewriteRule ^api/(.*)$ http://localhost:3000/api/$1 [P,L]
+
   # Serve existing files and directories directly
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d

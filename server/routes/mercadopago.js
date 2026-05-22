@@ -35,14 +35,17 @@ router.post("/subscription/create", async (req, res) => {
     if (!plan) return res.status(400).json({ error: "Plan inválido" });
     if (!payer?.email) return res.status(400).json({ error: "Falta email del pagador" });
 
-    // MP rejects PreApproval back_url/notification_url unless they're HTTPS
-    // and publicly reachable. Fail fast with a clear message instead of
-    // bouncing through the SDK to a 400 from MP saying "must be a valid URL".
-    if (!/^https:\/\//i.test(baseUrl())) {
+    // MP rejects PreApproval back_url/notification_url unless they're HTTPS in production.
+    // In dev/test we allow http:// so sandbox flows can be tested locally.
+    const isProd = process.env.NODE_ENV === "production";
+    if (isProd && !/^https:\/\//i.test(baseUrl())) {
       console.error(`[mercadopago] PUBLIC_BASE_URL must be HTTPS, got: ${baseUrl()}`);
       return res.status(500).json({
-        error: "Configuración inválida: PUBLIC_BASE_URL debe ser HTTPS para que Mercado Pago acepte back_url y notification_url. Para dev local usa un túnel (ngrok/cloudflared) o apunta a tu dominio de producción.",
+        error: "Configuración inválida: PUBLIC_BASE_URL debe ser HTTPS para que Mercado Pago acepte back_url y notification_url.",
       });
+    }
+    if (!isProd && !/^https:\/\//i.test(baseUrl())) {
+      console.warn(`[mercadopago] dev/test mode: using non-HTTPS back_url (${baseUrl()}). MP sandbox may reject notification_url — webhook delivery will not work locally.`);
     }
 
     // Idempotency: dedupe rapid double-submits (double-click, refresh) per
@@ -54,13 +57,19 @@ router.post("/subscription/create", async (req, res) => {
       return res.json(cached.payload);
     }
 
+    // MP requires back_url to be a publicly reachable URL (no localhost).
+    // In dev/test, set MP_BACK_URL in .env to point at your production domain or ngrok tunnel.
+    const backBase = process.env.MP_BACK_URL || baseUrl();
+    const notifUrl = `${baseUrl()}/api/webhooks/mercadopago`;
+    const useNotif = /^https:\/\//i.test(notifUrl);
+
     const result = await preApproval.create({
       body: {
         reason: `PixquiCloud — ${plan.title}`,
         external_reference: `${plan.id}-${crypto.randomUUID()}`,
         payer_email: payer.email,
-        back_url: `${baseUrl()}/success`,
-        notification_url: `${baseUrl()}/api/webhooks/mercadopago`,
+        back_url: `${backBase}/success`,
+        ...(useNotif && { notification_url: notifUrl }),
         auto_recurring: {
           frequency: plan.frequency,
           frequency_type: plan.frequency_type,
