@@ -766,7 +766,7 @@ export const Footer = ({ t }) => {
         <div className="footer-grid footer-grid-3">
           <div className="footer-brand">
             <a href="#" className="footer-logo" aria-label="PixquiCloud — inicio" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
-              <img src="assets/footer-logo.png" alt="PixquiCloud" />
+              <img src="/icons/favicon.svg" alt="PixquiCloud" />
             </a>
             <p className="footer-help">{t.footer.brand}</p>
             {t.footer.email && (
