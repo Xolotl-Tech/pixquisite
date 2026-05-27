@@ -13,11 +13,16 @@ const PORT = process.env.PORT || 3000;
 app.set("trust proxy", 1);
 
 // Comma-separated list in CORS_ORIGINS (e.g. "https://pixqui.cloud,https://www.pixqui.cloud").
-// Falls back to PUBLIC_BASE_URL or localhost dev origin.
-const corsOrigins = (process.env.CORS_ORIGINS || process.env.PUBLIC_BASE_URL || "http://localhost:5173")
+// Falls back to PUBLIC_BASE_URL or localhost dev origins.
+let corsOrigins = (process.env.CORS_ORIGINS || process.env.PUBLIC_BASE_URL || "http://localhost:5173")
   .split(",")
   .map((o) => o.trim())
   .filter(Boolean);
+
+// In development, allow any localhost port
+if (process.env.NODE_ENV !== "production") {
+  corsOrigins.push(/^http:\/\/localhost(:\d+)?$/);
+}
 
 app.use(helmet());
 app.use(cors({ origin: corsOrigins }));

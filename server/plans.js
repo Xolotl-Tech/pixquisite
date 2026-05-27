@@ -3,6 +3,15 @@
 // frequency / frequency_type define the billing cycle.
 
 export const PLANS = {
+  free: {
+    id: "free",
+    title: "Gratis",
+    description: "5 GB · para probar la nube",
+    transaction_amount: 0,
+    currency_id: "MXN",
+    frequency: 0,
+    frequency_type: "months",
+  },
   pro: {
     id: "pro",
     title: "Pro",

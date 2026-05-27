@@ -2,6 +2,7 @@ import { Router } from "express";
 import crypto from "node:crypto";
 import { MercadoPagoConfig, PreApproval } from "mercadopago";
 import { PLANS } from "../plans.js";
+import { sendFreeAccountEmail, sendAdminFreeSignupNotification } from "../lib/email.js";
 
 const router = Router();
 
@@ -146,6 +147,47 @@ router.post("/subscription/cancel", async (req, res) => {
   } catch (err) {
     console.error("[mercadopago] subscription/cancel error:", err);
     return res.status(500).json({ error: "No se pudo cancelar la suscripción" });
+  }
+});
+
+// POST /api/subscription/free
+// Register a user for the free plan (no payment).
+// body: { name, email }
+// Sends confirmation email to user and notification to admin.
+router.post("/subscription/free", async (req, res) => {
+  try {
+    const { name, email } = req.body || {};
+    
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: "Nombre requerido" });
+    }
+    if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      return res.status(400).json({ error: "Correo electrónico inválido" });
+    }
+
+    const cleanName = name.trim();
+    const cleanEmail = email.toLowerCase().trim();
+
+    // Send confirmation email to user
+    await sendFreeAccountEmail(cleanName, cleanEmail);
+    
+    // Send admin notification (non-blocking)
+    sendAdminFreeSignupNotification(cleanName, cleanEmail).catch(e => {
+      console.error("[subscription/free] admin email failed:", e.message);
+    });
+
+    return res.json({
+      ok: true,
+      message: "Te enviamos un correo de confirmación. Tu cuenta será creada en 12-24 horas.",
+      email: cleanEmail,
+    });
+  } catch (err) {
+    console.error("[subscription/free] error:", err);
+    const dev = process.env.NODE_ENV !== "production";
+    return res.status(500).json({
+      error: "No se pudo procesar el registro. Intenta de nuevo o escríbenos a hi@pixqui.cloud",
+      ...(dev && { debug: err.message }),
+    });
   }
 });
 

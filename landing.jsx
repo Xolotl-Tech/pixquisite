@@ -349,7 +349,7 @@ export const PricingSection = ({ t, onSignup }) => {
   const [payPlan, setPayPlan] = React.useState(null);
 
   const handlePlanClick = (plan) => {
-    if (plan.action === "checkout") {
+    if (plan.action === "checkout" || plan.action === "free") {
       setPayPlan(plan);
     } else if (plan.action === "contact") {
       window.location.href = "mailto:hi@pixqui.cloud?subject=Plan%20Empresa%20%E2%80%94%20PixquiCloud";
@@ -395,7 +395,10 @@ export const PaymentModal = ({ t, plan, onClose }) => {
   const [form, setForm] = React.useState({ name: "", email: "" });
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
+  const [success, setSuccess] = React.useState(false);
   const p = t.pay;
+  
+  const isFree = plan.action === "free";
 
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
@@ -410,25 +413,68 @@ export const PaymentModal = ({ t, plan, onClose }) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/subscription/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          planId: plan.id,
-          payer: { name: form.name.trim(), email: form.email.trim() },
-        }),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      const url = data.init_point || data.sandbox_init_point;
-      if (!url) throw new Error("missing init_point");
-      window.location.href = url;
+      if (isFree) {
+        // Free plan signup — send to /api/subscription/free
+        const res = await fetch("/api/subscription/free", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name.trim(),
+            email: form.email.trim(),
+          }),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || `HTTP ${res.status}`);
+        }
+        setSuccess(true);
+        // Close after 2 seconds
+        setTimeout(() => {
+          setLoading(false);
+          onClose();
+        }, 2000);
+      } else {
+        // Paid plan — send to Mercado Pago
+        const res = await fetch("/api/subscription/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            planId: plan.id,
+            payer: { name: form.name.trim(), email: form.email.trim() },
+          }),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || `HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        const url = data.init_point || data.sandbox_init_point;
+        if (!url) throw new Error("missing init_point");
+        window.location.href = url;
+      }
     } catch (err) {
       console.error(err);
-      setError(p.form.error);
+      setError(err.message || (isFree ? "No se pudo registrarse. Intenta de nuevo." : p.form.error));
       setLoading(false);
     }
   };
+
+  if (success && isFree) {
+    return createPortal(
+      <div className="contact-overlay" onClick={onClose}>
+        <div className="contact-modal pay-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true">
+          <button className="contact-close" onClick={onClose} aria-label={p.close}>×</button>
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ fontSize: 48, marginBottom: 10 }}>✓</div>
+            <h3 style={{ color: "var(--green)", margin: "0 0 10px 0" }}>¡Registro exitoso!</h3>
+            <p>Te enviamos un correo de confirmación a <strong>{form.email}</strong></p>
+            <p style={{ color: "var(--mute)", fontSize: 14 }}>Tu cuenta será creada en 12-24 horas</p>
+          </div>
+        </div>
+      </div>,
+      document.body
+    );
+  }
 
   return createPortal(
     <div className="contact-overlay" onClick={onClose}>
@@ -436,7 +482,12 @@ export const PaymentModal = ({ t, plan, onClose }) => {
         <button className="contact-close" onClick={onClose} aria-label={p.close}>×</button>
 
         <h3>{p.form.title}</h3>
-        <p className="contact-sub">{p.sub} · <strong style={{ color: "var(--green)" }}>{plan.name} {plan.price}</strong></p>
+        <p className="contact-sub">
+          {isFree 
+            ? "Sin tarjeta de crédito · Tu cuenta será creada en 12-24 horas"
+            : `${p.sub} · `}
+          <strong style={{ color: "var(--green)" }}>{plan.name} {plan.price}</strong>
+        </p>
         <form className="pay-form" onSubmit={handleSubmit}>
           <label>
             <span>{p.form.plan}</span>
@@ -462,9 +513,15 @@ export const PaymentModal = ({ t, plan, onClose }) => {
             />
           </label>
           {error && <div className="pay-error">{error}</div>}
-          <p className="pay-disclaimer">{p.form.disclaimer}</p>
+          <p className="pay-disclaimer">
+            {isFree 
+              ? "Te enviaremos un correo cuando tu cuenta esté lista. Si tienes preguntas, escríbenos a hi@pixqui.cloud"
+              : p.form.disclaimer}
+          </p>
           <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: "100%", justifyContent: "center" }}>
-            {loading ? p.form.loading : p.form.submit}
+            {loading 
+              ? (isFree ? "Registrando..." : p.form.loading)
+              : (isFree ? "Registrarse" : p.form.submit)}
           </button>
         </form>
       </div>
