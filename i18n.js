@@ -6,7 +6,7 @@ export const I18N = {
       tag: "PixquiCloud · Hospedado en México",
       h1a: "Tu nube,",
       h1b: "tu control.",
-      sub: "Una nube privada construida sobre Nextcloud. Tus archivos, fotos, calendario y conversaciones — siempre tuyos. Sin rastreo, sin algoritmos, sin sorpresas.",
+      sub: "La nube privada de todos. Tus archivos, fotos, calendario y conversaciones — siempre tuyos. Sin rastreo, sin algoritmos, sin sorpresas.",
       cta1: "Empieza gratis",
       cta2: "Ver demo",
       stats: [
@@ -98,7 +98,6 @@ export const I18N = {
       eyebrow: "PREGUNTAS",
       title: "Lo que la gente pregunta.",
       items: [
-        { q: "¿Qué es Nextcloud y cómo se relaciona con PixquiCloud?", a: "Nextcloud es la plataforma open-source que potencia tu nube. PixquiCloud es nuestra implementación gestionada — hospedada en datacenters mexicanos, configurada con cifrado E2EE por defecto, y con soporte en español." },
         { q: "¿Puedo migrar desde Google Drive, iCloud o Dropbox?", a: "Sí. Tenemos asistentes de migración de un clic para Google Drive, OneDrive, Dropbox e iCloud. Conservamos estructura de carpetas, fechas y permisos compartidos." },
         { q: "¿Qué pasa con mis datos si cancelo?", a: "Recibes 30 días para exportar todo en formatos abiertos (ZIP, ICS, vCard). Después, tus datos se eliminan de forma segura con verificación criptográfica." },
         { q: "¿PixquiCloud puede ver mis archivos?", a: "No. Con cifrado E2EE activado, las llaves se generan y guardan en tu dispositivo. Ni siquiera nosotros — y mucho menos un tercero — podemos descifrar tu contenido." },
@@ -269,7 +268,7 @@ export const I18N = {
       tag: "PixquiCloud · Hosted in Mexico",
       h1a: "Your cloud,",
       h1b: "your rules.",
-      sub: "A private cloud built on Nextcloud. Your files, photos, calendar and conversations — always yours. No tracking, no algorithms, no surprises.",
+      sub: "A private cloud built for you. Your files, photos, calendar and conversations — always yours. No tracking, no algorithms, no surprises.",
       cta1: "Start free",
       cta2: "See demo",
       stats: [
@@ -362,7 +361,6 @@ export const I18N = {
       eyebrow: "QUESTIONS",
       title: "What people ask.",
       items: [
-        { q: "What is Nextcloud and how does it relate to PixquiCloud?", a: "Nextcloud is the open-source platform that powers your cloud. PixquiCloud is our managed implementation — hosted in Mexican datacenters, configured with E2EE by default, and supported in Spanish." },
         { q: "Can I migrate from Google Drive, iCloud or Dropbox?", a: "Yes. We have one-click migration assistants for Google Drive, OneDrive, Dropbox and iCloud. We preserve folder structure, dates, and shared permissions." },
         { q: "What happens to my data if I cancel?", a: "You get 30 days to export everything in open formats (ZIP, ICS, vCard). After that, your data is securely deleted with cryptographic verification." },
         { q: "Can PixquiCloud see my files?", a: "No. With E2EE enabled, keys are generated and stored on your device. Not even us — and definitely not a third party — can decrypt your content." },
